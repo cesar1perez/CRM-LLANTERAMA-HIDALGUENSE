@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Llanterama Hidalguense - CRM Maestro</title>
+    <title>Llanterama Hidalguense - CRM 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -56,69 +56,70 @@
             display: flex; flex-direction: column; align-items: center;
         }
         .action-btn:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .btn-label { background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; margin-top: 15px; font-weight: bold; }
+        .btn-label { background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; margin-top: 15px; font-weight: bold; text-decoration: none; display: inline-block; }
 
         /* --- STATS --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .chart-card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
         .big-number { font-size: 40px; font-weight: 900; color: var(--primary); margin: 10px 0; }
         .stat-list-detail { text-align: left; font-size: 12px; max-height: 150px; overflow-y: auto; padding: 10px; border-top: 1px solid #eee; margin-top: 10px; }
-        .chart-container { position: relative; height: 280px; width: 100%; margin-top: 10px; }
+        .chart-container { position: relative; height: 320px; width: 100%; margin-top: 10px; }
 
         /* --- TABLA Y FILTROS --- */
         .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .filter-row select, .filter-row input { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 150px; }
+        .filter-row select, .filter-row input { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 140px; font-size: 12px; }
         .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 950px; }
         th { background: #f8f9fa; color: var(--primary); padding: 12px; text-align: left; cursor: pointer; border-bottom: 3px solid var(--secondary); }
         td { padding: 12px; border-bottom: 1px solid #eee; }
 
         /* --- MAPA --- */
-        .map-layout { display: grid; grid-template-columns: 1fr 350px; gap: 15px; height: 80vh; }
-        #map { border-radius: 15px; }
+        .map-layout { display: grid; grid-template-columns: 1fr 380px; gap: 15px; height: 80vh; }
+        #map { border-radius: 15px; border: 1px solid #ddd; }
         .map-sidebar { background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
         .client-list { overflow-y: auto; flex: 1; padding: 10px; }
-        .client-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 12px; }
+        .client-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 12px; transition: 0.2s; }
         .client-item:hover { background: #f0f4ff; }
 
         /* --- MODAL --- */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 2% auto; padding: 20px; width: 90%; max-width: 500px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: white; margin: 2% auto; padding: 25px; width: 90%; max-width: 500px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; }
-        .img-preview { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; background: #eee; }
+        .img-preview { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; background: #eee; }
 
         .btn-whatsapp { background: var(--accent); color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 11px; }
+        .btn-gps { background: var(--primary); color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; display: block; text-align: center; margin-top: 10px; font-size: 13px; }
 
-        @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } .map-sidebar { height: 300px; } }
+        @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } .map-sidebar { height: 450px; } }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="dynamic-title">Llanterama Hidalguense</div>
-        <div style="font-size: 11px; font-weight: bold;">PANEL CORPORATIVO 2026</div>
+        <div style="font-size: 11px; font-weight: bold;">ESTRATEGIA DIGITAL</div>
     </nav>
 
     <div class="container">
         
         <div id="home" class="view-section active">
             <div class="home-hero">
-                <div class="dynamic-title" style="font-size: 40px;">CRM Maestría en Ventas</div>
-                <p>Análisis Estratégico de Mercado y Prospección</p>
+                <div class="dynamic-title" style="font-size: 45px;">CRM 2026</div>
+                <p>Plataforma de Inteligencia y Seguimiento de Campo</p>
             </div>
             <div class="action-grid">
                 <a href="#" class="action-btn" onclick="showView('stats-view')">
-                    <div style="font-size: 50px;">📊</div>
+                    <div style="font-size: 55px;">📊</div>
                     <h3>Estadísticas de Resultados</h3>
                     <div class="btn-label">VER DASHBOARD</div>
                 </a>
                 <a href="#" class="action-btn" onclick="showView('lista')">
-                    <div style="font-size: 50px;">📋</div>
+                    <div style="font-size: 55px;">📋</div>
                     <h3>Listado de Prospectos</h3>
                     <div class="btn-label">VER BASE DE DATOS</div>
                 </a>
                 <a href="#" class="action-btn" onclick="showView('mapa-view')">
-                    <div style="font-size: 50px;">📍</div>
+                    <div style="font-size: 55px;">📍</div>
                     <h3>Mapa Logístico</h3>
                     <div class="btn-label" style="background:var(--secondary); color:var(--primary);">VER MAPA</div>
                 </a>
@@ -139,15 +140,15 @@
                     <div class="stat-list-detail" id="detail-zonas"></div>
                 </div>
                 <div class="chart-card">
-                    <h4>Rendimiento Impulsores</h4>
+                    <h4>Participación Impulsores</h4>
                     <div class="chart-container"><canvas id="chartVend"></canvas></div>
                 </div>
                 <div class="chart-card">
-                    <h4>Zonas Estratégicas</h4>
+                    <h4>Zonas Prospectadas</h4>
                     <div class="chart-container"><canvas id="chartZon"></canvas></div>
                 </div>
                 <div class="chart-card">
-                    <h4>Giro de Negocio</h4>
+                    <h4>Giro del Cliente</h4>
                     <div class="chart-container"><canvas id="chartGir"></canvas></div>
                 </div>
                 <div class="chart-card">
@@ -159,18 +160,13 @@
 
         <div id="lista" class="view-section">
             <button class="btn-back" onclick="showView('home')">← VOLVER</button>
-            <div class="filter-row">
-                <input type="text" id="qSearch" placeholder="🔍 Buscar negocio..." onkeyup="multiFilter()">
-                <select id="fVend" onchange="multiFilter()"><option value="">Todos los Vendedores</option></select>
-                <select id="fZon" onchange="multiFilter()"><option value="">Todas las Zonas</option></select>
-                <select id="fGir" onchange="multiFilter()"><option value="">Todos los Giros</option></select>
-                <select id="fInt" onchange="multiFilter()"><option value="">Todos los Intereses</option></select>
-            </div>
+            <div class="filter-row" id="filters-list">
+                </div>
             <div class="table-container">
                 <table id="mainTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0)">Marca Temporal</th>
+                            <th onclick="sortTable(0)">Alta (Fecha/Hora)</th>
                             <th onclick="sortTable(1)">Impulsor</th>
                             <th onclick="sortTable(2)">Negocio</th>
                             <th onclick="sortTable(3)">WhatsApp</th>
@@ -189,7 +185,8 @@
             <div class="map-layout">
                 <div id="map"></div>
                 <div class="map-sidebar">
-                    <input type="text" id="mapSearch" style="padding:10px; border:none; border-bottom:1px solid #ddd;" placeholder="🔍 Buscar cliente..." onkeyup="filterMapList()">
+                    <div style="padding: 15px; border-bottom: 1px solid #eee; background: #f8f9fa;" id="filters-map">
+                        </div>
                     <div class="client-list" id="mapList"></div>
                 </div>
             </div>
@@ -205,12 +202,12 @@
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQaNDGlyxQDLjTr_zSuJ0wlc9NZNaFpg6sfU2SNjyxyXHuttqPTSQGlQISm8A3avEyD-b7iRbdD8nxb/pub?gid=1161733578&single=true&output=csv';
-        let globalData = [], markers = [];
+        let globalData = [], markersArray = [];
         let map;
-        const palette = ['#003399', '#ffcc00', '#25D366', '#ff4444', '#8e44ad', '#f39c12', '#3498db', '#e74c3c'];
+        const palette = ['#003399', '#ffcc00', '#25D366', '#ff4444', '#8e44ad', '#f39c12', '#3498db', '#e67e22'];
         let colorMap = {};
 
-        Chart.register(ChartDataLabels); // Registrar plugin de porcentajes
+        Chart.register(ChartDataLabels);
 
         function showView(id) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
@@ -248,78 +245,84 @@
 
         function processAll() {
             const body = document.getElementById('tableBody');
-            const mList = document.getElementById('mapList');
-            let stats = { vend: {}, zon: {}, gir: {}, int: {} };
-            
-            // Llenar selectores únicos
             const sets = { v: new Set(), z: new Set(), g: new Set(), i: new Set() };
+            let stats = { vend: {}, zon: {}, gir: {}, int: {} };
 
-            globalData.slice(1).forEach((row, idx) => {
-                const [time, vend, , zona, neg, giro, , , wha, , ubi, , int, , img] = row;
-                
+            globalData.slice(1).forEach((row) => {
+                const [time, vend, , zona, neg, giro, , , , , , , int] = row;
                 stats.vend[vend] = (stats.vend[vend] || 0) + 1;
                 stats.zon[zona] = (stats.zon[zona] || 0) + 1;
                 stats.gir[giro] = (stats.gir[giro] || 0) + 1;
                 stats.int[int] = (stats.int[int] || 0) + 1;
-
                 sets.v.add(vend); sets.z.add(zona); sets.g.add(giro); sets.i.add(int);
-
                 if(!colorMap[vend]) colorMap[vend] = palette[Object.keys(colorMap).length % palette.length];
-
-                // Fila Tabla
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${time}</td>
-                    <td style="color:${colorMap[vend]}; font-weight:bold;">${vend}</td>
-                    <td>${neg}</td>
-                    <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" class="btn-whatsapp" target="_blank">WA</a></td>
-                    <td>${zona}</td>
-                    <td>${giro}</td>
-                    <td>${int}</td>
-                `;
-                tr.onclick = (e) => { if(e.target.tagName !== 'A') openModal(row); };
-                body.appendChild(tr);
-
-                // Mapa
-                const coords = parseCoords(ubi);
-                if(coords) {
-                    const marker = L.circleMarker(coords, { radius: 9, fillColor: colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-                    marker.bindPopup(`<b>${neg}</b><br>${vend}`);
-                    marker.on('click', () => openModal(row));
-                    markers.push({marker, neg, vend});
-                }
-
-                // Lista Mapa
-                const li = document.createElement('div');
-                li.className = 'client-item';
-                li.innerHTML = `<b>${neg}</b><br><span style="color:${colorMap[vend]}">${vend}</span> | ${zona}`;
-                li.onclick = () => { if(coords) { map.setView(coords, 16); } openModal(row); };
-                mList.appendChild(li);
             });
 
-            // Llenar Filtros
-            fillSel('fVend', sets.v); fillSel('fZon', sets.z); fillSel('fGir', sets.g); fillSel('fInt', sets.i);
+            // Generar Filtros idénticos para ambos lados
+            const filterHTML = `
+                <input type="text" class="f-q" placeholder="🔍 Buscar negocio..." onkeyup="multiFilter()">
+                <select class="f-v" onchange="multiFilter()"><option value="">Vendedores</option>${Array.from(sets.v).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
+                <select class="f-z" onchange="multiFilter()"><option value="">Zonas</option>${Array.from(sets.z).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
+                <select class="f-g" onchange="multiFilter()"><option value="">Giros</option>${Array.from(sets.g).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
+                <select class="f-i" onchange="multiFilter()"><option value="">Interés</option>${Array.from(sets.i).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
+            `;
+            document.getElementById('filters-list').innerHTML = filterHTML;
+            document.getElementById('filters-map').innerHTML = filterHTML.replace(/multiFilter/g, 'multiFilterMap');
 
-            // Pintar Totales y Listas
+            // Render Inicial
+            renderTable(globalData.slice(1));
+            renderMap(globalData.slice(1));
+
+            // Totales
             document.getElementById('stat-total').innerText = globalData.length - 1;
             document.getElementById('stat-zonas').innerText = sets.z.size;
-
-            let vDet = ''; for(let v in stats.vend) vDet += `<div style="margin-bottom:4px;"> <span style="color:${colorMap[v]}">●</span> ${v}: <b>${stats.vend[v]}</b></div>`;
+            let vDet = ''; for(let v in stats.vend) vDet += `<div style="margin-bottom:4px;"><span style="color:${colorMap[v]}">●</span> ${v}: <b>${stats.vend[v]}</b></div>`;
             document.getElementById('detail-vendedores').innerHTML = vDet;
-
             let zDet = ''; for(let z in stats.zon) zDet += `<div>📍 ${z}: <b>${stats.zon[z]}</b></div>`;
             document.getElementById('detail-zonas').innerHTML = zDet;
 
             initCharts(stats);
         }
 
-        function fillSel(id, set) {
-            const s = document.getElementById(id);
-            Array.from(set).sort().forEach(v => { s.innerHTML += `<option value="${v}">${v}</option>`; });
+        function renderTable(data) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            data.forEach(row => {
+                const [time, vend, , zona, neg, giro, , , wha, , , , int] = row;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${time}</td><td style="color:${colorMap[vend]}; font-weight:bold;">${vend}</td><td>${neg}</td>
+                <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" class="btn-whatsapp" target="_blank">WA</a></td>
+                <td>${zona}</td><td>${giro}</td><td>${int}</td>`;
+                tr.onclick = (e) => { if(e.target.tagName !== 'A') openModal(row); };
+                body.appendChild(tr);
+            });
+        }
+
+        function renderMap(data) {
+            const mList = document.getElementById('mapList');
+            mList.innerHTML = '';
+            markersArray.forEach(m => map.removeLayer(m));
+            markersArray = [];
+
+            data.forEach(row => {
+                const [, vend, , zona, neg, , , , , , ubi] = row;
+                const coords = parseCoords(ubi);
+                if(coords) {
+                    const marker = L.circleMarker(coords, { radius: 9, fillColor: colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
+                    marker.bindPopup(`<b>${neg}</b><br>${vend}`);
+                    marker.on('click', () => openModal(row));
+                    markersArray.push(marker);
+                }
+                const li = document.createElement('div');
+                li.className = 'client-item';
+                li.innerHTML = `<b>${neg}</b><br><span style="color:${colorMap[vend]}">${vend}</span> | ${zona}`;
+                li.onclick = () => { if(coords) { map.setView(coords, 17); } openModal(row); };
+                mList.appendChild(li);
+            });
         }
 
         function initCharts(data) {
-            const cfg = (ctx, labelData, isVend = false) => ({
+            const cfg = (labelData, isVend = false) => ({
                 type: 'pie',
                 data: {
                     labels: Object.keys(labelData),
@@ -331,10 +334,10 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
                         datalabels: {
                             color: '#fff',
-                            font: { weight: 'bold', size: 10 },
+                            font: { weight: 'bold', size: 14 },
                             formatter: (value, ctx) => {
                                 let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
                                 return ((value * 100) / sum).toFixed(1) + "%";
@@ -344,48 +347,64 @@
                 }
             });
 
-            new Chart(document.getElementById('chartVend'), cfg(null, data.vend, true));
-            new Chart(document.getElementById('chartZon'), cfg(null, data.zon));
-            new Chart(document.getElementById('chartGir'), cfg(null, data.gir));
-            new Chart(document.getElementById('chartInt'), cfg(null, data.int));
+            new Chart(document.getElementById('chartVend'), cfg(data.vend, true));
+            new Chart(document.getElementById('chartZon'), cfg(data.zon));
+            new Chart(document.getElementById('chartGir'), cfg(data.gir));
+            new Chart(document.getElementById('chartInt'), cfg(data.int));
         }
 
         function multiFilter() {
-            const q = document.getElementById('qSearch').value.toLowerCase();
-            const v = document.getElementById('fVend').value;
-            const z = document.getElementById('fZon').value;
-            const g = document.getElementById('fGir').value;
-            const i = document.getElementById('fInt').value;
+            const container = document.getElementById('filters-list');
+            const q = container.querySelector('.f-q').value.toLowerCase();
+            const v = container.querySelector('.f-v').value;
+            const z = container.querySelector('.f-z').value;
+            const g = container.querySelector('.f-g').value;
+            const i = container.querySelector('.f-i').value;
 
             document.querySelectorAll('#tableBody tr').forEach(tr => {
                 const txt = tr.innerText.toLowerCase();
-                const tV = tr.cells[1].innerText;
-                const tZ = tr.cells[4].innerText;
-                const tG = tr.cells[5].innerText;
-                const tI = tr.cells[6].innerText;
-
-                const match = txt.includes(q) && (!v || tV === v) && (!z || tZ === z) && (!g || tG === g) && (!i || tI === i);
+                const match = txt.includes(q) && (!v || tr.cells[1].innerText === v) && (!z || tr.cells[4].innerText === z) && (!g || tr.cells[5].innerText === g) && (!i || tr.cells[6].innerText === i);
                 tr.style.display = match ? '' : 'none';
             });
         }
 
+        function multiFilterMap() {
+            const container = document.getElementById('filters-map');
+            const q = container.querySelector('.f-q').value.toLowerCase();
+            const v = container.querySelector('.f-v').value;
+            const z = container.querySelector('.f-z').value;
+            const g = container.querySelector('.f-g').value;
+            const i = container.querySelector('.f-i').value;
+
+            const filtered = globalData.slice(1).filter(row => {
+                const match = row.join(' ').toLowerCase().includes(q) && (!v || row[1] === v) && (!z || row[3] === z) && (!g || row[5] === g) && (!i || row[12] === i);
+                return match;
+            });
+            renderMap(filtered);
+        }
+
         function openModal(row) {
-            const [time, vend, , zona, neg, giro, cont, tel, wha, , , comp, int, obs, img] = row;
+            const [time, vend, , zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img] = row;
+            const coords = parseCoords(ubi);
+            const gpsBtn = coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${coords[0]},${coords[1]}" target="_blank" class="btn-gps">📍 IR A LA UBICACIÓN (GPS)</a>` : '';
+            
             document.getElementById('modal-data').innerHTML = `
-                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Cargando+Imagen...'">
+                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Sin+Imagen'">
                 <h2 style="color:var(--primary); margin:0;">${neg}</h2>
-                <p style="font-size:12px; color:#666;">Registrado el: ${time}</p>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px; margin-top:15px;">
+                <p style="font-size:11px; color:#999; margin-top:5px;">Registrado: ${time}</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px; margin-top:15px;">
                     <div><b>Impulsor:</b><br>${vend}</div>
                     <div><b>Zona:</b><br>${zona}</div>
                     <div><b>Contacto:</b><br>${cont}</div>
                     <div><b>Giro:</b><br>${giro}</div>
                 </div>
                 <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-                <p style="font-size:13px;"><b>Interés:</b> ${int}</p>
-                <p style="font-size:13px;"><b>Competencia:</b> ${comp}</p>
-                <p style="font-size:13px; background:#f9f9f9; padding:10px; border-radius:8px;"><b>Notas:</b><br>${obs || 'Sin observaciones'}</p>
-                <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="display:block; text-align:center; background:var(--accent); text-decoration:none;">CONTACTAR POR WHATSAPP</a>
+                <p style="font-size:12px;"><b>Interés:</b> ${int} | <b>Competencia:</b> ${comp}</p>
+                <p style="font-size:12px; background:#f4f7f9; padding:10px; border-radius:8px;"><b>Notas:</b> ${obs || 'Sin obs.'}</p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin-top:10px;">WHATSAPP</a>
+                    ${gpsBtn}
+                </div>
             `;
             document.getElementById('clientModal').style.display = "block";
         }
