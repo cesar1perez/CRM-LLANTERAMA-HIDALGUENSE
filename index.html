@@ -139,9 +139,8 @@
                     <div class="stat-list-detail" id="detail-vendedores"></div>
                 </div>
                 <div class="chart-card">
-                    <h4>Cobertura por Zona</h4>
-                    <div class="big-number" id="stat-zonas">0</div>
-                    <div class="stat-list-detail" id="detail-zonas"></div>
+                    <h4>Efectividad de Venta</h4>
+                    <div class="chart-container"><canvas id="chartConv"></canvas></div>
                 </div>
                 <div class="chart-card">
                     <h4>Rendimiento Impulsores</h4>
@@ -246,14 +245,16 @@
 
         function processAll() {
             const sets = { v: new Set(), z: new Set(), g: new Set(), i: new Set() };
-            let stats = { vend: {}, zon: {}, gir: {}, int: {} };
+            let stats = { vend: {}, zon: {}, gir: {}, int: {}, closed: 0 };
 
             globalData.slice(1).forEach(row => {
-                const [, vend, , zona, neg, giro, , , , , , , int] = row;
+                const [, vend, , zona, neg, giro, , , , , , , int, , , venta] = row;
                 stats.vend[vend] = (stats.vend[vend] || 0) + 1;
                 stats.zon[zona] = (stats.zon[zona] || 0) + 1;
                 stats.gir[giro] = (stats.gir[giro] || 0) + 1;
                 stats.int[int] = (stats.int[int] || 0) + 1;
+                if(venta && venta.trim() !== "") stats.closed++;
+                
                 sets.v.add(vend); sets.z.add(zona); sets.g.add(giro); sets.i.add(int);
                 if(!colorMap[vend]) colorMap[vend] = palette[Object.keys(colorMap).length % palette.length];
             });
@@ -270,11 +271,8 @@
 
             // Totales Dashboard
             document.getElementById('stat-total').innerText = globalData.length - 1;
-            document.getElementById('stat-zonas').innerText = sets.z.size;
             let vDet = ''; for(let v in stats.vend) vDet += `<div style="margin-bottom:4px;"><span style="color:${colorMap[v]}">●</span> ${v}: <b>${stats.vend[v]}</b></div>`;
             document.getElementById('detail-vendedores').innerHTML = vDet;
-            let zDet = ''; for(let z in stats.zon) zDet += `<div>📍 ${z}: <b>${stats.zon[z]}</b></div>`;
-            document.getElementById('detail-zonas').innerHTML = zDet;
 
             renderTable(globalData.slice(1));
             renderMap(globalData.slice(1));
@@ -321,13 +319,13 @@
         }
 
         function initCharts(data) {
-            const cfg = (labelData, isVend = false) => ({
+            const cfg = (labelData, isVend = false, customColors = null) => ({
                 type: 'pie',
                 data: {
                     labels: Object.keys(labelData),
                     datasets: [{
                         data: Object.values(labelData),
-                        backgroundColor: isVend ? Object.keys(labelData).map(v => colorMap[v]) : palette
+                        backgroundColor: customColors || (isVend ? Object.keys(labelData).map(v => colorMap[v]) : palette)
                     }]
                 },
                 options: {
@@ -338,12 +336,17 @@
                             color: '#fff', font: { weight: 'bold', size: 14 },
                             formatter: (value, ctx) => {
                                 let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                return ((value * 100) / sum).toFixed(1) + "%";
+                                return ((value * 100) / (sum || 1)).toFixed(1) + "%";
                             }
                         }
                     }
                 }
             });
+
+            // Grafica de Conversión
+            const convData = { "Ventas Cerradas": data.closed, "En Proceso": (globalData.length - 1) - data.closed };
+            new Chart(document.getElementById('chartConv'), cfg(convData, false, ['#28a745', '#003399']));
+
             new Chart(document.getElementById('chartVend'), cfg(data.vend, true));
             new Chart(document.getElementById('chartZon'), cfg(data.zon));
             new Chart(document.getElementById('chartGir'), cfg(data.gir));
@@ -357,9 +360,8 @@
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
             document.getElementById('modal-data').innerHTML = `
-                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Cargando+Imagen...'">
+                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Imagen+Cargando...'">
                 <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
-                <p style="font-size:11px; color:#999;">Alta: ${time}</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
                     <div><b>Impulsor:</b> ${vend}</div>
                     <div><b>Zona:</b> ${zona}</div>
@@ -381,7 +383,7 @@
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin:0;">WHATSAPP</a>
-                    ${coords ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">GPS MAPS</a>` : ''}
+                    ${coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">GPS MAPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
