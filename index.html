@@ -88,7 +88,7 @@
         .close-btn { position: absolute; top: 10px; right: 20px; font-size: 40px; cursor: pointer; color: #333; font-weight: bold; z-index: 2100; transition: 0.2s; }
         .close-btn:hover { color: red; }
         .visit-card { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px; border-left: 3px solid var(--secondary); font-size: 12px; }
-        .img-preview { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; }
+        .img-preview { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; background: #eee; }
 
         @media (max-width: 900px) {
             .map-layout { flex-direction: column; }
@@ -138,26 +138,11 @@
                     <div class="big-number" id="stat-total">0</div>
                     <div class="stat-list-detail" id="detail-vendedores"></div>
                 </div>
-                <div class="chart-card">
-                    <h4>Efectividad de Venta</h4>
-                    <div class="chart-container"><canvas id="chartConv"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4>Rendimiento Impulsores</h4>
-                    <div class="chart-container"><canvas id="chartVend"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4>Zonas Estratégicas</h4>
-                    <div class="chart-container"><canvas id="chartZon"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4>Giro de Negocio</h4>
-                    <div class="chart-container"><canvas id="chartGir"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4>Nivel de Interés</h4>
-                    <div class="chart-container"><canvas id="chartInt"></canvas></div>
-                </div>
+                <div class="chart-card"><h4>Efectividad de Venta</h4><div class="chart-container"><canvas id="chartConv"></canvas></div></div>
+                <div class="chart-card"><h4>Rendimiento Impulsores</h4><div class="chart-container"><canvas id="chartVend"></canvas></div></div>
+                <div class="chart-card"><h4>Zonas Estratégicas</h4><div class="chart-container"><canvas id="chartZon"></canvas></div></div>
+                <div class="chart-card"><h4>Giro de Negocio</h4><div class="chart-container"><canvas id="chartGir"></canvas></div></div>
+                <div class="chart-card"><h4>Nivel de Interés</h4><div class="chart-container"><canvas id="chartInt"></canvas></div></div>
             </div>
         </div>
 
@@ -226,11 +211,21 @@
             return match ? [parseFloat(match[1]), parseFloat(match[2])] : null;
         }
 
-        function getImg(id) {
-            if(!id || id.length < 5) return 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible';
-            if(id.includes('id=')) id = id.split('id=')[1].split('&')[0];
-            else if(id.includes('/d/')) id = id.split('/d/')[1].split('/')[0];
-            return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+        // --- FUNCIÓN DE IMAGEN MEJORADA ---
+        function getImg(url) {
+            if (!url || url.length < 10) return 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible';
+            
+            // Si es un link de Drive, lo convertimos a miniatura
+            if (url.includes('drive.google.com')) {
+                let id = '';
+                if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
+                else if (url.includes('/d/')) id = url.split('/d/')[1].split('/')[0];
+                return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+            }
+            
+            // Si es un link de Google Maps Image (googleusercontent) o directo, lo devolvemos tal cual
+            // Estos links ya funcionan directamente en el tag <img>
+            return url;
         }
 
         map = L.map('map').setView([20.0842, -98.3672], 12);
@@ -287,27 +282,18 @@
             const body = document.getElementById('tableBody');
             body.innerHTML = '';
             data.forEach(row => {
-                // MAPEO DIRECTO SEGÚN TU SHEET:
-                const alta = row[0];   // Columna A
-                const vend = row[1];   // Columna B
-                const zona = row[3];   // Columna D
-                const neg = row[4];    // COLUMNA E: Nombre del negocio / Razón Social
-                const giro = row[5];   // Columna F
-                const cont = row[6];   // COLUMNA G: Nombre de contacto
-                const wha = row[8];    // Columna I
-                const int = row[12];   // Columna M
-                const venta = row[15]; // Columna P
-
+                const neg = row[4];    // COLUMNA E: Nombre Negocio
+                const cont = row[6];   // COLUMNA G: Nombre Contacto
+                const wha = row[8];    
                 const tr = document.createElement('tr');
-                if (venta && venta.trim() !== "") tr.className = "row-sold";
-                
+                if (row[15] && row[15].trim() !== "") tr.className = "row-sold";
                 tr.innerHTML = `
-                    <td>${alta}</td>
-                    <td style="color:${colorMap[vend]}; font-weight:bold;">${vend}</td>
+                    <td>${row[0]}</td>
+                    <td style="color:${colorMap[row[1]]}; font-weight:bold;">${row[1]}</td>
                     <td>${neg}</td>
-                    <td><b>${cont || 'N/A'}</b> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}</td>
+                    <td><b>${cont || 'N/A'}</b> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}</td>
                     <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
-                    <td>${zona}</td><td>${giro}</td><td>${int}</td>
+                    <td>${row[3]}</td><td>${row[5]}</td><td>${row[12]}</td>
                 `;
                 tr.onclick = (e) => { if(e.target.tagName !== 'A') openModal(row); };
                 body.appendChild(tr);
@@ -321,71 +307,31 @@
             markersArray = [];
 
             data.forEach(row => {
-                const vend = row[1];
-                const zona = row[3];
-                const neg = row[4];    // COLUMNA E
-                const ubi = row[10];   // Columna K
-                const venta = row[15];
-                
-                const coords = parseCoords(ubi);
-
+                const coords = parseCoords(row[10]);
                 if(coords) {
-                    const marker = L.circleMarker(coords, { radius: 10, fillColor: venta ? '#28a745' : colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-                    marker.bindPopup(`<b>${neg}</b><br>${vend}`);
+                    const marker = L.circleMarker(coords, { radius: 10, fillColor: row[15] ? '#28a745' : colorMap[row[1]], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
+                    marker.bindPopup(`<b>${row[4]}</b><br>${row[1]}`);
                     marker.on('click', () => openModal(row));
                     markersArray.push(marker);
                 }
                 const li = document.createElement('div');
-                li.className = `client-item ${venta ? 'row-sold' : ''}`;
+                li.className = `client-item ${row[15] ? 'row-sold' : ''}`;
                 li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                li.innerHTML = `<b>${neg}</b><br><small>${vend} | ${zona}</small> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}`;
+                li.innerHTML = `<b>${row[4]}</b><br><small>${row[1]} | ${row[3]}</small>`;
                 li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
                 mList.appendChild(li);
             });
         }
 
-        function initCharts(stats) {
-            const cfg = (labelData, isVend = false, customColors = null) => ({
-                type: 'pie',
-                data: {
-                    labels: Object.keys(labelData),
-                    datasets: [{
-                        data: Object.values(labelData),
-                        backgroundColor: customColors || (isVend ? Object.keys(labelData).map(v => colorMap[v]) : palette)
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } },
-                        datalabels: {
-                            color: '#fff', font: { weight: 'bold', size: 14 },
-                            formatter: (value, ctx) => {
-                                let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                return ((value * 100) / (sum || 1)).toFixed(1) + "%";
-                            }
-                        }
-                    }
-                }
-            });
-
-            const convData = { "Ventas Cerradas": stats.closed, "En Proceso": (globalData.length - 1) - stats.closed };
-            new Chart(document.getElementById('chartConv'), cfg(convData, false, ['#28a745', '#003399']));
-            new Chart(document.getElementById('chartVend'), cfg(stats.vend, true));
-            new Chart(document.getElementById('chartZon'), cfg(stats.zon));
-            new Chart(document.getElementById('chartGir'), cfg(stats.gir));
-            new Chart(document.getElementById('chartInt'), cfg(stats.int));
-        }
-
         function openModal(row) {
+            // Mapping: E=4 (neg), G=6 (cont), O=14 (img)
             const [alta, vend, razon, zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
             const coords = parseCoords(ubi);
-            // neg es columna E
             let visitas = '';
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
             document.getElementById('modal-data').innerHTML = `
-                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Imagen+Cargando...'">
+                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Imagen+Vista+Calle+No+Disponible'">
                 <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
                     <div><b>Impulsor:</b> ${vend}</div>
@@ -395,35 +341,33 @@
                 </div>
                 <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
                 <p style="font-size:13px;"><b>Nivel de Interés:</b> <span style="color:var(--primary); font-weight:bold;">${int}</span></p>
-                <p style="font-size:13px;"><b>Competencia:</b><br><small>${comp || 'No especificado'}</small></p>
+                <p style="font-size:13px;"><b>Giro:</b> ${giro}</p>
                 
                 ${venta ? `<div style="background:var(--sold); padding:12px; border-radius:10px; margin-top:10px; border:1px solid var(--sold-border);">
                     <h4 style="margin:0; color:var(--sold-border);">💰 VENTA CONCRETADA</h4>
                     <p style="margin:5px 0; font-size:13px;"><b>Factura/Detalle:</b> ${venta}</p>
                 </div>` : ''}
 
-                <h4 style="margin-top:20px; margin-bottom:10px; border-bottom:1px solid #eee;">Bitácora de Visitas</h4>
-                ${visitas || '<p style="font-size:12px; color:#999;">Sin visitas de seguimiento registradas.</p>'}
-                <p style="font-size:12px; background:#f0f4ff; padding:10px; border-radius:8px; margin-top:15px;"><b>Notas Iniciales:</b><br>${obs || 'N/A'}</p>
+                <h4 style="margin-top:20px; margin-bottom:10px; border-bottom:1px solid #eee;">Seguimiento</h4>
+                ${visitas || '<p style="font-size:12px; color:#999;">Sin visitas registradas.</p>'}
+                <p style="font-size:12px; background:#f0f4ff; padding:10px; border-radius:8px; margin-top:15px;"><b>Notas:</b><br>${obs || 'N/A'}</p>
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin:0;">WHATSAPP</a>
-                    ${coords ? `<a href="https://www.google.com/maps?q=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">GPS MAPS</a>` : ''}
+                    ${coords ? `<a href="https://www.google.com/maps?q=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">ABRIR EN GPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
         }
 
+        // Resto de funciones auxiliares sin cambios
         function multiFilter() {
             const q = document.querySelector('#lista .f-q').value.toLowerCase();
             const v = document.querySelector('#lista .f-v').value;
             const z = document.querySelector('#lista .f-z').value;
             const i = document.querySelector('#lista .f-i').value;
             document.querySelectorAll('#tableBody tr').forEach(tr => {
-                const match = tr.innerText.toLowerCase().includes(q) && 
-                              (!v || tr.cells[1].innerText === v) && 
-                              (!z || tr.cells[5].innerText === z) && 
-                              (!i || tr.cells[7].innerText === i);
+                const match = tr.innerText.toLowerCase().includes(q) && (!v || tr.cells[1].innerText === v) && (!z || tr.cells[5].innerText === z) && (!i || tr.cells[7].innerText === i);
                 tr.style.display = match ? '' : 'none';
             });
         }
@@ -446,15 +390,27 @@
                 switching = false;
                 let rows = table.rows;
                 for (var i = 1; i < (rows.length - 1); i++) {
-                    var s = false;
-                    var x = rows[i].getElementsByTagName("TD")[n];
-                    var y = rows[i + 1].getElementsByTagName("TD")[n];
+                    var s = false, x = rows[i].getElementsByTagName("TD")[n], y = rows[i + 1].getElementsByTagName("TD")[n];
                     if (dir == "asc") { if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) { s = true; break; } }
                     else { if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) { s = true; break; } }
                 }
                 if (s) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; count++; }
                 else if (count == 0 && dir == "asc") { dir = "desc"; switching = true; }
             }
+        }
+
+        function initCharts(stats) {
+            const cfg = (labelData, isVend = false, customColors = null) => ({
+                type: 'pie',
+                data: { labels: Object.keys(labelData), datasets: [{ data: Object.values(labelData), backgroundColor: customColors || (isVend ? Object.keys(labelData).map(v => colorMap[v]) : palette) }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { color: '#fff', font: { weight: 'bold', size: 14 }, formatter: (value, ctx) => { let sum = ctx.dataset.data.reduce((a, b) => a + b, 0); return ((value * 100) / (sum || 1)).toFixed(1) + "%"; } } } }
+            });
+            const convData = { "Ventas": stats.closed, "En Proceso": (globalData.length - 1) - stats.closed };
+            new Chart(document.getElementById('chartConv'), cfg(convData, false, ['#28a745', '#003399']));
+            new Chart(document.getElementById('chartVend'), cfg(stats.vend, true));
+            new Chart(document.getElementById('chartZon'), cfg(stats.zon));
+            new Chart(document.getElementById('chartGir'), cfg(stats.gir));
+            new Chart(document.getElementById('chartInt'), cfg(stats.int));
         }
     </script>
 </body>
