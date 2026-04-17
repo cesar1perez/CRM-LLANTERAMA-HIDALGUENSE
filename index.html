@@ -88,7 +88,7 @@
         .close-btn { position: absolute; top: 10px; right: 20px; font-size: 40px; cursor: pointer; color: #333; font-weight: bold; z-index: 2100; transition: 0.2s; }
         .close-btn:hover { color: red; }
         .visit-card { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px; border-left: 3px solid var(--secondary); font-size: 12px; }
-        .img-preview { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; background: #eee; }
+        .img-preview { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; background: #eee; overflow: hidden; }
 
         @media (max-width: 900px) {
             .map-layout { flex-direction: column; }
@@ -211,22 +211,15 @@
             return match ? [parseFloat(match[1]), parseFloat(match[2])] : null;
         }
 
-        // --- FUNCIÓN DE IMAGEN CORREGIDA PARA LINKS DIRECTOS ---
         function getImg(url) {
-            if (!url || url.trim().length < 10) return 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible';
-            
+            if (!url || url.trim().length < 10) return '';
             let cleanUrl = url.trim();
-            
-            // Si es un link de Drive, aplicamos el convertidor de miniaturas
             if (cleanUrl.includes('drive.google.com')) {
                 let id = '';
                 if (cleanUrl.includes('id=')) id = cleanUrl.split('id=')[1].split('&')[0];
                 else if (cleanUrl.includes('/d/')) id = cleanUrl.split('/d/')[1].split('/')[0];
                 return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
             }
-            
-            // Si es un link directo (googleusercontent, etc.), lo devolvemos tal cual
-            // Aseguramos que el navegador lo trate como imagen
             return cleanUrl;
         }
 
@@ -317,7 +310,6 @@
                 const li = document.createElement('div');
                 li.className = `client-item ${row[15] ? 'row-sold' : ''}`;
                 li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                // AGREGADO: Punto de color en el nombre del vendedor
                 li.innerHTML = `<b>${row[4]}</b><br><small><span style="color:${colorMap[vend]}">●</span> ${vend} | ${row[3]}</small> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}`;
                 li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
                 mList.appendChild(li);
@@ -330,8 +322,17 @@
             let visitas = '';
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
+            // AJUSTE PARA IFRAME O IMAGEN
+            let mediaHtml = '';
+            if (img && img.includes('<iframe')) {
+                mediaHtml = `<div class="img-preview" style="border:none;">${img.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="320"')}</div>`;
+            } else {
+                let imgSrc = getImg(img);
+                mediaHtml = `<img src="${imgSrc || 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible'}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Error+al+cargar+imagen'">`;
+            }
+
             document.getElementById('modal-data').innerHTML = `
-                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Cargando+Imagen+Calle...'">
+                ${mediaHtml}
                 <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
                     <div><b>Impulsor:</b> ${vend}</div>
@@ -354,7 +355,7 @@
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin:0;">WHATSAPP</a>
-                    ${coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">ABRIR EN GPS</a>` : ''}
+                    ${coords ? `<a href="https://www.google.com/maps?q=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">ABRIR EN GPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
