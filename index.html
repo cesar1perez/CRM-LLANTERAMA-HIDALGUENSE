@@ -249,7 +249,12 @@
             let stats = { vend: {}, zon: {}, gir: {}, int: {}, closed: 0 };
 
             globalData.slice(1).forEach(row => {
-                const [, vend, , zona, neg, giro, , , , , , , int, , , venta] = row;
+                const vend = row[1];
+                const zona = row[3];
+                const giro = row[5];
+                const int = row[12];
+                const venta = row[15];
+
                 stats.vend[vend] = (stats.vend[vend] || 0) + 1;
                 stats.zon[zona] = (stats.zon[zona] || 0) + 1;
                 stats.gir[giro] = (stats.gir[giro] || 0) + 1;
@@ -282,28 +287,24 @@
             const body = document.getElementById('tableBody');
             body.innerHTML = '';
             data.forEach(row => {
-                // CORRECCIÓN DE ÍNDICES:
-                // row[0]=Alta, row[1]=Vendedor, row[2]=Razón Social, row[3]=Zona, row[4]=Negocio, row[5]=Giro, row[6]=Contacto...
-                const time = row[0];
-                const vend = row[1];
-                const razon = row[2];
-                const zona = row[3];
-                const neg = row[4]; // Esta es la Columna E
-                const giro = row[5];
-                const cont = row[6]; // Esta es la Columna G
-                const wha = row[8];
-                const int = row[12];
-                const venta = row[15];
+                // MAPEO DIRECTO SEGÚN TU SHEET:
+                const alta = row[0];   // Columna A
+                const vend = row[1];   // Columna B
+                const zona = row[3];   // Columna D
+                const neg = row[4];    // COLUMNA E: Nombre del negocio / Razón Social
+                const giro = row[5];   // Columna F
+                const cont = row[6];   // COLUMNA G: Nombre de contacto
+                const wha = row[8];    // Columna I
+                const int = row[12];   // Columna M
+                const venta = row[15]; // Columna P
 
                 const tr = document.createElement('tr');
                 if (venta && venta.trim() !== "") tr.className = "row-sold";
                 
-                const displayNombreNegocio = (razon && razon.trim() !== "") ? razon : neg;
-
                 tr.innerHTML = `
-                    <td>${time}</td>
+                    <td>${alta}</td>
                     <td style="color:${colorMap[vend]}; font-weight:bold;">${vend}</td>
-                    <td>${displayNombreNegocio}</td>
+                    <td>${neg}</td>
                     <td><b>${cont || 'N/A'}</b> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}</td>
                     <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
                     <td>${zona}</td><td>${giro}</td><td>${int}</td>
@@ -321,25 +322,23 @@
 
             data.forEach(row => {
                 const vend = row[1];
-                const razon = row[2];
                 const zona = row[3];
-                const neg = row[4];
-                const ubi = row[10];
+                const neg = row[4];    // COLUMNA E
+                const ubi = row[10];   // Columna K
                 const venta = row[15];
                 
                 const coords = parseCoords(ubi);
-                const displayNombreNegocio = (razon && razon.trim() !== "") ? razon : neg;
 
                 if(coords) {
                     const marker = L.circleMarker(coords, { radius: 10, fillColor: venta ? '#28a745' : colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-                    marker.bindPopup(`<b>${displayNombreNegocio}</b><br>${vend}`);
+                    marker.bindPopup(`<b>${neg}</b><br>${vend}`);
                     marker.on('click', () => openModal(row));
                     markersArray.push(marker);
                 }
                 const li = document.createElement('div');
                 li.className = `client-item ${venta ? 'row-sold' : ''}`;
                 li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                li.innerHTML = `<b>${displayNombreNegocio}</b><br><small>${vend} | ${zona}</small> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}`;
+                li.innerHTML = `<b>${neg}</b><br><small>${vend} | ${zona}</small> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}`;
                 li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
                 mList.appendChild(li);
             });
@@ -379,15 +378,15 @@
         }
 
         function openModal(row) {
-            const [time, vend, razon, zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
+            const [alta, vend, razon, zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
             const coords = parseCoords(ubi);
-            const displayNombreNegocio = (razon && razon.trim() !== "") ? razon : neg;
+            // neg es columna E
             let visitas = '';
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
             document.getElementById('modal-data').innerHTML = `
                 <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Imagen+Cargando...'">
-                <h2 style="color:var(--primary); margin:0;">${displayNombreNegocio} ${venta ? '✅' : ''}</h2>
+                <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
                     <div><b>Impulsor:</b> ${vend}</div>
                     <div><b>Zona:</b> ${zona}</div>
@@ -395,7 +394,6 @@
                     <div><b>WhatsApp:</b> ${wha}</div>
                 </div>
                 <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-                <p style="font-size:13px;"><b>Negocio (Nombre):</b> ${neg}</p>
                 <p style="font-size:13px;"><b>Nivel de Interés:</b> <span style="color:var(--primary); font-weight:bold;">${int}</span></p>
                 <p style="font-size:13px;"><b>Competencia:</b><br><small>${comp || 'No especificado'}</small></p>
                 
