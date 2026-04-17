@@ -64,7 +64,7 @@
         .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; }
         .filter-row select, .filter-row input { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 140px; }
         .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
         th { background: #f8f9fa; color: var(--primary); padding: 12px; text-align: left; cursor: pointer; border-bottom: 3px solid var(--secondary); white-space: nowrap; }
         th::after { content: " ↕"; font-size: 10px; color: #999; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
@@ -168,9 +168,9 @@
                 <table id="mainTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0)">Marca Temporal</th>
+                            <th onclick="sortTable(0)">Alta</th>
                             <th onclick="sortTable(1)">Impulsor</th>
-                            <th onclick="sortTable(2)">Negocio</th>
+                            <th onclick="sortTable(2)">Razón Social / Negocio</th>
                             <th onclick="sortTable(3)">WhatsApp</th>
                             <th onclick="sortTable(4)">Zona</th>
                             <th onclick="sortTable(5)">Giro</th>
@@ -261,7 +261,7 @@
 
             // Filtros
             const filterHTML = `
-                <input type="text" class="f-q" placeholder="🔍 Negocio..." onkeyup="multiFilter()">
+                <input type="text" class="f-q" placeholder="🔍 Buscar..." onkeyup="multiFilter()">
                 <select class="f-v" onchange="multiFilter()"><option value="">Vendedor</option>${Array.from(sets.v).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
                 <select class="f-z" onchange="multiFilter()"><option value="">Zona</option>${Array.from(sets.z).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
                 <select class="f-i" onchange="multiFilter()"><option value="">Interés</option>${Array.from(sets.i).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
@@ -283,12 +283,21 @@
             const body = document.getElementById('tableBody');
             body.innerHTML = '';
             data.forEach(row => {
-                const [time, vend, , zona, neg, giro, , , wha, , , , int, , , venta] = row;
+                // Mapeo: 0:Alta, 1:Vendedor, 2:RazonSocial, 3:Zona, 4:Negocio, 5:Giro... 15:Venta
+                const [time, vend, razon, zona, neg, giro, , , wha, , , , int, , , venta] = row;
                 const tr = document.createElement('tr');
                 if (venta && venta.trim() !== "") tr.className = "row-sold";
-                tr.innerHTML = `<td>${time}</td><td style="color:${colorMap[vend]}; font-weight:bold;">${vend}</td><td>${neg} ${venta ? '<span class="badge-sold">VENTA</span>' : ''}</td>
-                <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
-                <td>${zona}</td><td>${giro}</td><td>${int}</td>`;
+                
+                // Usamos Razon Social si existe, sino el nombre del Negocio
+                const displayName = (razon && razon.trim() !== "") ? razon : neg;
+
+                tr.innerHTML = `
+                    <td>${time}</td>
+                    <td style="color:${colorMap[vend]}; font-weight:bold;">${vend}</td>
+                    <td><b>${displayName}</b> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}</td>
+                    <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
+                    <td>${zona}</td><td>${giro}</td><td>${int}</td>
+                `;
                 tr.onclick = (e) => { if(e.target.tagName !== 'A') openModal(row); };
                 body.appendChild(tr);
             });
@@ -301,18 +310,20 @@
             markersArray = [];
 
             data.forEach(row => {
-                const [, vend, , zona, neg, , , , , , ubi, , , , , venta] = row;
+                const [, vend, razon, zona, neg, , , , , , ubi, , , , , venta] = row;
                 const coords = parseCoords(ubi);
+                const displayName = (razon && razon.trim() !== "") ? razon : neg;
+
                 if(coords) {
                     const marker = L.circleMarker(coords, { radius: 10, fillColor: venta ? '#28a745' : colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-                    marker.bindPopup(`<b>${neg}</b><br>${vend}`);
+                    marker.bindPopup(`<b>${displayName}</b><br>${vend}`);
                     marker.on('click', () => openModal(row));
                     markersArray.push(marker);
                 }
                 const li = document.createElement('div');
                 li.className = `client-item ${venta ? 'row-sold' : ''}`;
                 li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                li.innerHTML = `<b>${neg}</b><br><small>${vend} | ${zona}</small> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}`;
+                li.innerHTML = `<b>${displayName}</b><br><small>${vend} | ${zona}</small> ${venta ? '<span class="badge-sold">VENTA</span>' : ''}`;
                 li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
                 mList.appendChild(li);
             });
@@ -343,10 +354,8 @@
                 }
             });
 
-            // Grafica de Conversión
             const convData = { "Ventas Cerradas": data.closed, "En Proceso": (globalData.length - 1) - data.closed };
             new Chart(document.getElementById('chartConv'), cfg(convData, false, ['#28a745', '#003399']));
-
             new Chart(document.getElementById('chartVend'), cfg(data.vend, true));
             new Chart(document.getElementById('chartZon'), cfg(data.zon));
             new Chart(document.getElementById('chartGir'), cfg(data.gir));
@@ -354,14 +363,15 @@
         }
 
         function openModal(row) {
-            const [time, vend, , zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
+            const [time, vend, razon, zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
             const coords = parseCoords(ubi);
+            const displayName = (razon && razon.trim() !== "") ? razon : neg;
             let visitas = '';
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
             document.getElementById('modal-data').innerHTML = `
                 <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Imagen+Cargando...'">
-                <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
+                <h2 style="color:var(--primary); margin:0;">${displayName} ${venta ? '✅' : ''}</h2>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
                     <div><b>Impulsor:</b> ${vend}</div>
                     <div><b>Zona:</b> ${zona}</div>
@@ -369,6 +379,7 @@
                     <div><b>WhatsApp:</b> ${wha}</div>
                 </div>
                 <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+                <p style="font-size:13px;"><b>Negocio/Razón:</b> ${neg}</p>
                 <p style="font-size:13px;"><b>Nivel de Interés:</b> <span style="color:var(--primary); font-weight:bold;">${int}</span></p>
                 <p style="font-size:13px;"><b>Competencia:</b><br><small>${comp || 'No especificado'}</small></p>
                 
@@ -383,7 +394,7 @@
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin:0;">WHATSAPP</a>
-                    ${coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">GPS MAPS</a>` : ''}
+                    ${coords ? `<a href="https://www.google.com/maps?q=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">GPS MAPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
