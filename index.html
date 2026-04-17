@@ -57,7 +57,7 @@
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .chart-card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
         .big-number { font-size: 40px; font-weight: 900; color: var(--primary); margin: 10px 0; }
-        .stat-list-detail { text-align: left; font-size: 12px; max-height: 150px; overflow-y: auto; padding: 10px; border-top: 1px solid #eee; margin-top: 10px; }
+        .stat-list-detail { text-align: left; font-size: 12px; max-height: 200px; overflow-y: auto; padding: 10px; border-top: 1px solid #eee; margin-top: 10px; }
         .chart-container { position: relative; height: 320px; width: 100%; margin-top: 10px; }
 
         /* --- TABLA --- */
@@ -134,9 +134,12 @@
             <button class="btn-back" onclick="showView('home')">← VOLVER</button>
             <div class="stats-grid">
                 <div class="chart-card">
-                    <h4>Total Prospectos</h4>
+                    <h4>Resumen General</h4>
                     <div class="big-number" id="stat-total">0</div>
-                    <div class="stat-list-detail" id="detail-vendedores"></div>
+                    <p style="font-size:11px; color:#666; font-weight:bold; text-transform:uppercase;">Prospectos por Impulsor</p>
+                    <div class="stat-list-detail" id="detail-vendedores" style="max-height: 120px;"></div>
+                    <p style="font-size:11px; color:#666; font-weight:bold; text-transform:uppercase; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">Cobertura por Zona</p>
+                    <div class="stat-list-detail" id="detail-zonas" style="max-height: 120px;"></div>
                 </div>
                 <div class="chart-card"><h4>Efectividad de Venta</h4><div class="chart-container"><canvas id="chartConv"></canvas></div></div>
                 <div class="chart-card"><h4>Rendimiento Impulsores</h4><div class="chart-container"><canvas id="chartVend"></canvas></div></div>
@@ -155,8 +158,8 @@
                         <tr>
                             <th onclick="sortTable(0)">Alta</th>
                             <th onclick="sortTable(1)">Impulsor</th>
-                            <th onclick="sortTable(2)">Razón Social / Negocio</th>
-                            <th onclick="sortTable(3)">Nombre de Contacto</th>
+                            <th onclick="sortTable(2)">Negocio</th>
+                            <th onclick="sortTable(3)">Contacto</th>
                             <th onclick="sortTable(4)">WhatsApp</th>
                             <th onclick="sortTable(5)">Zona</th>
                             <th onclick="sortTable(6)">Giro</th>
@@ -265,8 +268,14 @@
             document.getElementById('filters-map').innerHTML = filterHTML.replace(/multiFilter/g, 'multiFilterMap');
 
             document.getElementById('stat-total').innerText = globalData.length - 1;
+            
+            // Listado de Vendedores en tarjeta principal
             let vDet = ''; for(let v in stats.vend) vDet += `<div style="margin-bottom:4px;"><span style="color:${colorMap[v]}">●</span> ${v}: <b>${stats.vend[v]}</b></div>`;
             document.getElementById('detail-vendedores').innerHTML = vDet;
+
+            // Listado de Zonas en tarjeta principal (RESTAURADO)
+            let zDet = ''; for(let z in stats.zon) zDet += `<div style="margin-bottom:4px;"><span style="color:var(--primary)">📍</span> ${z}: <b>${stats.zon[z]}</b></div>`;
+            document.getElementById('detail-zonas').innerHTML = zDet;
 
             renderTable(globalData.slice(1));
             renderMap(globalData.slice(1));
@@ -310,7 +319,7 @@
                 const li = document.createElement('div');
                 li.className = `client-item ${row[15] ? 'row-sold' : ''}`;
                 li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                li.innerHTML = `<b>${row[4]}</b><br><small><span style="color:${colorMap[vend]}">●</span> ${vend} | ${row[3]}</small> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}`;
+                li.innerHTML = `<b>${row[4]}</b><br><small><span style="color:${colorMap[vend]}">●</span> ${vend} | ${row[3]}</small>`;
                 li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
                 mList.appendChild(li);
             });
@@ -322,7 +331,6 @@
             let visitas = '';
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
-            // AJUSTE PARA IFRAME O IMAGEN
             let mediaHtml = '';
             if (img && img.includes('<iframe')) {
                 mediaHtml = `<div class="img-preview" style="border:none;">${img.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="320"')}</div>`;
