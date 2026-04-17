@@ -211,21 +211,23 @@
             return match ? [parseFloat(match[1]), parseFloat(match[2])] : null;
         }
 
-        // --- FUNCIÓN DE IMAGEN MEJORADA ---
+        // --- FUNCIÓN DE IMAGEN CORREGIDA PARA LINKS DIRECTOS ---
         function getImg(url) {
-            if (!url || url.length < 10) return 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible';
+            if (!url || url.trim().length < 10) return 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible';
             
-            // Si es un link de Drive, lo convertimos a miniatura
-            if (url.includes('drive.google.com')) {
+            let cleanUrl = url.trim();
+            
+            // Si es un link de Drive, aplicamos el convertidor de miniaturas
+            if (cleanUrl.includes('drive.google.com')) {
                 let id = '';
-                if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
-                else if (url.includes('/d/')) id = url.split('/d/')[1].split('/')[0];
+                if (cleanUrl.includes('id=')) id = cleanUrl.split('id=')[1].split('&')[0];
+                else if (cleanUrl.includes('/d/')) id = cleanUrl.split('/d/')[1].split('/')[0];
                 return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
             }
             
-            // Si es un link de Google Maps Image (googleusercontent) o directo, lo devolvemos tal cual
-            // Estos links ya funcionan directamente en el tag <img>
-            return url;
+            // Si es un link directo (googleusercontent, etc.), lo devolvemos tal cual
+            // Aseguramos que el navegador lo trate como imagen
+            return cleanUrl;
         }
 
         map = L.map('map').setView([20.0842, -98.3672], 12);
@@ -282,17 +284,14 @@
             const body = document.getElementById('tableBody');
             body.innerHTML = '';
             data.forEach(row => {
-                const neg = row[4];    // COLUMNA E: Nombre Negocio
-                const cont = row[6];   // COLUMNA G: Nombre Contacto
-                const wha = row[8];    
                 const tr = document.createElement('tr');
                 if (row[15] && row[15].trim() !== "") tr.className = "row-sold";
                 tr.innerHTML = `
                     <td>${row[0]}</td>
                     <td style="color:${colorMap[row[1]]}; font-weight:bold;">${row[1]}</td>
-                    <td>${neg}</td>
-                    <td><b>${cont || 'N/A'}</b> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}</td>
-                    <td><a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
+                    <td>${row[4]}</td>
+                    <td><b>${row[6] || 'N/A'}</b> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}</td>
+                    <td><a href="https://wa.me/${row[8].replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
                     <td>${row[3]}</td><td>${row[5]}</td><td>${row[12]}</td>
                 `;
                 tr.onclick = (e) => { if(e.target.tagName !== 'A') openModal(row); };
@@ -307,31 +306,32 @@
             markersArray = [];
 
             data.forEach(row => {
+                const vend = row[1];
                 const coords = parseCoords(row[10]);
                 if(coords) {
-                    const marker = L.circleMarker(coords, { radius: 10, fillColor: row[15] ? '#28a745' : colorMap[row[1]], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-                    marker.bindPopup(`<b>${row[4]}</b><br>${row[1]}`);
+                    const marker = L.circleMarker(coords, { radius: 10, fillColor: row[15] ? '#28a745' : colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
+                    marker.bindPopup(`<b>${row[4]}</b><br>${vend}`);
                     marker.on('click', () => openModal(row));
                     markersArray.push(marker);
                 }
                 const li = document.createElement('div');
                 li.className = `client-item ${row[15] ? 'row-sold' : ''}`;
                 li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                li.innerHTML = `<b>${row[4]}</b><br><small>${row[1]} | ${row[3]}</small>`;
+                // AGREGADO: Punto de color en el nombre del vendedor
+                li.innerHTML = `<b>${row[4]}</b><br><small><span style="color:${colorMap[vend]}">●</span> ${vend} | ${row[3]}</small> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}`;
                 li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
                 mList.appendChild(li);
             });
         }
 
         function openModal(row) {
-            // Mapping: E=4 (neg), G=6 (cont), O=14 (img)
             const [alta, vend, razon, zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
             const coords = parseCoords(ubi);
             let visitas = '';
             [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
 
             document.getElementById('modal-data').innerHTML = `
-                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Imagen+Vista+Calle+No+Disponible'">
+                <img src="${getImg(img)}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Cargando+Imagen+Calle...'">
                 <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
                     <div><b>Impulsor:</b> ${vend}</div>
@@ -354,13 +354,12 @@
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin:0;">WHATSAPP</a>
-                    ${coords ? `<a href="https://www.google.com/maps?q=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">ABRIR EN GPS</a>` : ''}
+                    ${coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">ABRIR EN GPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
         }
 
-        // Resto de funciones auxiliares sin cambios
         function multiFilter() {
             const q = document.querySelector('#lista .f-q').value.toLowerCase();
             const v = document.querySelector('#lista .f-v').value;
