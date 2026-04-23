@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Llanterama Hidalguense - Gestión de prospectos</title>
+    <title>Llanterama Hidalguense - Control Maestro 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -15,14 +15,14 @@
             --primary: #003399;
             --secondary: #ffcc00;
             --accent: #25D366;
-            --sold: #d4edda;
-            --sold-border: #28a745;
+            --established: #fff9db;
+            --established-border: #f39c12;
             --bg: #f4f7f9;
             --white: #ffffff;
             --text: #333333;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { margin: 0; background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 
         nav {
@@ -32,138 +32,165 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .dynamic-title {
-            font-size: 24px; font-weight: 900; text-transform: uppercase;
+            font-size: 22px; font-weight: 900; text-transform: uppercase;
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
             background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: shine 3s linear infinite; margin: 0;
         }
         @keyframes shine { to { background-position: 200% center; } }
 
-        .container { width: 95%; max-width: 1300px; margin: 20px auto; }
+        .container { width: 95%; max-width: 1400px; margin: 20px auto; }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-back { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
 
-        /* --- DASHBOARD --- */
-        .home-hero { text-align: center; padding: 40px 20px; background: var(--white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        /* DASHBOARD */
+        .home-hero { text-align: center; padding: 40px 20px; background: var(--white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #eee; }
+        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
         .action-btn { background: var(--white); padding: 30px; border-radius: 20px; text-align: center; text-decoration: none; color: var(--text); border: 2px solid #eee; transition: 0.3s; display: flex; flex-direction: column; align-items: center; }
-        .action-btn:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .btn-label { background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; margin-top: 15px; font-weight: bold; text-decoration: none; }
+        .action-btn:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-label { background: var(--primary); color: white; padding: 10px 22px; border-radius: 50px; margin-top: 15px; font-weight: bold; text-decoration: none; font-size: 12px; }
 
-        /* --- STATS --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .chart-card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
-        .big-number { font-size: 40px; font-weight: 900; color: var(--primary); margin: 10px 0; }
-        .stat-list-detail { text-align: left; font-size: 12px; max-height: 200px; overflow-y: auto; padding: 10px; border-top: 1px solid #eee; margin-top: 10px; }
-        .chart-container { position: relative; height: 320px; width: 100%; margin-top: 10px; }
+        .chart-card { background: var(--white); padding: 20px; border-radius: 15px; border: 1px solid #eee; text-align: center; }
+        .chart-container { position: relative; height: 250px; width: 100%; margin-top: 10px; }
 
-        /* --- TABLA --- */
-        .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; }
-        .filter-row select, .filter-row input { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 140px; }
-        .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1200px; }
-        th { background: #f8f9fa; color: var(--primary); padding: 12px; text-align: left; cursor: pointer; border-bottom: 3px solid var(--secondary); white-space: nowrap; }
-        th::after { content: " ↕"; font-size: 10px; color: #999; }
+        /* FILTROS Y TABLA */
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
+        .filter-row select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 130px; font-size: 12px; }
+        
+        .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
+        th { background: #f8f9fa; color: var(--primary); padding: 12px; text-align: left; cursor: pointer; border-bottom: 3px solid var(--secondary); white-space: nowrap; user-select: none; }
+        th:hover { background: #edf2f7; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        .row-sold { background-color: var(--sold) !important; border-left: 5px solid var(--sold-border); }
-        .badge-sold { background: var(--sold-border); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px; }
+        
+        .row-established { background-color: var(--established) !important; border-left: 6px solid var(--established-border); }
+        .badge-status { padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; margin-left: 5px; color: white; text-transform: uppercase; }
+        .bg-established { background: var(--established-border); }
+        .vta-positiva { font-weight: bold; color: #155724; background: #d4edda; padding: 4px 8px; border-radius: 6px; border: 1px solid #c3e6cb; }
 
-        /* --- MAPA --- */
-        .map-layout { display: flex; gap: 15px; height: 80vh; position: relative; }
+        /* MAPA */
+        .map-layout { display: flex; gap: 15px; height: 75vh; }
         #map { flex: 1; border-radius: 15px; border: 1px solid #ddd; z-index: 1; }
-        .map-sidebar { width: 380px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; transition: 0.3s; z-index: 10; }
-        .toggle-sidebar {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            z-index: 100; background: var(--primary); color: white; 
-            padding: 12px 25px; border-radius: 50px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            font-weight: bold; cursor: pointer; display: none;
-        }
+        .map-sidebar { width: 380px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
+        
+        /* MODAL */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 2% auto; padding: 30px; width: 90%; max-width: 750px; border-radius: 25px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 15px; right: 25px; font-size: 40px; cursor: pointer; color: #333; }
+        .visit-card { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 4px solid var(--secondary); font-size: 12px; }
+        .img-preview { width: 100%; height: 350px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; background: #eee; }
 
-        /* --- MODAL --- */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 2% auto; padding: 30px; width: 90%; max-width: 650px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .close-btn { position: absolute; top: 10px; right: 20px; font-size: 40px; cursor: pointer; color: #333; font-weight: bold; z-index: 2100; transition: 0.2s; }
-        .close-btn:hover { color: red; }
-        .visit-card { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px; border-left: 3px solid var(--secondary); font-size: 12px; }
-        .img-preview { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; background: #eee; overflow: hidden; }
-
-        @media (max-width: 900px) {
-            .map-layout { flex-direction: column; }
-            .map-sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateY(105%); }
-            .map-sidebar.open { transform: translateY(0); }
-            .toggle-sidebar { display: block; }
-        }
+        /* INDICADORES VENTAS */
+        .tires-summary { display: flex; gap: 15px; margin-bottom: 12px; flex-wrap: wrap; }
+        .tire-box { background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; text-align: center; flex: 1; min-width: 150px; }
+        .tire-box span { display: block; font-size: 24px; font-weight: 900; color: var(--primary); }
+        .tire-box label { font-size: 10px; text-transform: uppercase; font-weight: 800; color: #777; letter-spacing: 1px; }
+        .conv-detail { font-size: 14px; color: var(--text); font-weight: bold; margin-bottom: 2px; display: block; }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="dynamic-title">Llanterama Hidalguense</div>
-        <div style="font-size: 11px; font-weight: bold; color: var(--primary);">Gestión de prospectos</div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--primary);">CONTROL DE GESTIÓN 2026</div>
     </nav>
 
     <div class="container">
         <div id="home" class="view-section active">
             <div class="home-hero">
-                <div class="dynamic-title" style="font-size: 45px;">Gestión de prospectos</div>
-                <p>Plataforma de Control de Prospección y Seguimiento de Ventas 2026</p>
+                <div class="dynamic-title" style="font-size: 34px;">Panel de Control Hidalguense</div>
+                <p>Inteligencia de Datos y Seguimiento Comercial</p>
             </div>
             <div class="action-grid">
                 <a href="#" class="action-btn" onclick="showView('stats-view')">
-                    <div style="font-size: 55px;">📊</div>
-                    <h3>Estadísticas de Resultados</h3>
-                    <div class="btn-label">VER DASHBOARD</div>
+                    <div style="font-size: 50px;">📊</div>
+                    <h3>Estadísticas</h3>
+                    <div class="btn-label">DASHBOARD</div>
                 </a>
                 <a href="#" class="action-btn" onclick="showView('lista')">
-                    <div style="font-size: 55px;">📋</div>
-                    <h3>Listado de Prospectos</h3>
-                    <div class="btn-label">VER BASE DE DATOS</div>
+                    <div style="font-size: 50px;">📋</div>
+                    <h3>Prospectos</h3>
+                    <div class="btn-label">LISTADO GENERAL</div>
                 </a>
                 <a href="#" class="action-btn" onclick="showView('mapa-view')">
-                    <div style="font-size: 55px;">📍</div>
+                    <div style="font-size: 50px;">📍</div>
                     <h3>Mapa Logístico</h3>
-                    <div class="btn-label" style="background:var(--secondary); color:var(--primary);">GEOLOCALIZACIÓN</div>
+                    <div class="btn-label" style="background:var(--secondary); color:var(--primary);">UBICACIONES</div>
                 </a>
+                <a href="#" class="action-btn" onclick="showView('ventas-view')" style="border-color: var(--secondary);">
+                    <div style="font-size: 50px;">🛞</div>
+                    <h3 style="color:var(--primary)">Ventas Mensuales</h3>
+                    <div class="btn-label" style="background:var(--secondary); color:var(--primary);">ESTADÍSTICA VTA</div>
+                </a>
+            </div>
+        </div>
+
+        <div id="ventas-view" class="view-section">
+            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
+            <div class="tires-summary">
+                <div class="tire-box"><label>Llantas Abril</label><span id="vSum-abr">0</span></div>
+                <div class="tire-box"><label>Llantas Mayo</label><span id="vSum-may">0</span></div>
+                <div class="tire-box" style="background: var(--primary);"><label style="color:white">Total Llantas</label><span id="vSum-total" style="color:white">0</span></div>
+                <div class="tire-box" style="border: 2px solid var(--secondary);">
+                    <label style="color:var(--primary)">% Conv. Clientes</label>
+                    <span id="vConv-rate-vals" class="conv-detail">0 / 0</span>
+                    <span id="vConv-rate" style="color:var(--primary); font-size: 20px;">0%</span>
+                </div>
+            </div>
+            <div class="filter-row" id="filters-ventas"></div>
+            <div class="table-container">
+                <table id="salesTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0, 'salesTable')">Código ↕</th>
+                            <th onclick="sortTable(1, 'salesTable')">Negocio / Cliente ↕</th>
+                            <th onclick="sortTable(2, 'salesTable')">Vendedor ↕</th>
+                            <th onclick="sortTable(3, 'salesTable')">Estado ↕</th>
+                            <th onclick="sortTable(4, 'salesTable')" style="background:#fff3e0; text-align:center;">ABRIL ↕</th>
+                            <th>Obs. Abril</th>
+                            <th onclick="sortTable(6, 'salesTable')" style="background:#e1f5fe; text-align:center;">MAYO ↕</th>
+                            <th>Obs. Mayo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vtaTableBody"></tbody>
+                </table>
             </div>
         </div>
 
         <div id="stats-view" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
+            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
             <div class="stats-grid">
                 <div class="chart-card">
-                    <h4>Resumen General</h4>
-                    <div class="big-number" id="stat-total">0</div>
-                    <p style="font-size:11px; color:#666; font-weight:bold; text-transform:uppercase;">Prospectos por Impulsor</p>
-                    <div class="stat-list-detail" id="detail-vendedores" style="max-height: 120px;"></div>
-                    <p style="font-size:11px; color:#666; font-weight:bold; text-transform:uppercase; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">Cobertura por Zona</p>
-                    <div class="stat-list-detail" id="detail-zonas" style="max-height: 120px;"></div>
+                    <h4>Prospectos Totales</h4>
+                    <div style="font-size: 40px; font-weight: 900; color: var(--primary);" id="total-count">0</div>
+                    <div id="v-list-detail" style="text-align:left; font-size:12px; margin-top:10px; border-top:1px solid #eee; padding-top:10px;"></div>
                 </div>
-                <div class="chart-card"><h4>Efectividad de Venta</h4><div class="chart-container"><canvas id="chartConv"></canvas></div></div>
-                <div class="chart-card"><h4>Rendimiento Impulsores</h4><div class="chart-container"><canvas id="chartVend"></canvas></div></div>
-                <div class="chart-card"><h4>Zonas Estratégicas</h4><div class="chart-container"><canvas id="chartZon"></canvas></div></div>
-                <div class="chart-card"><h4>Giro de Negocio</h4><div class="chart-container"><canvas id="chartGir"></canvas></div></div>
-                <div class="chart-card"><h4>Nivel de Interés</h4><div class="chart-container"><canvas id="chartInt"></canvas></div></div>
+                <div class="chart-card"><h4>Efectividad (Prospecto vs Cliente)</h4><div class="chart-container"><canvas id="c-conv"></canvas></div></div>
+                <div class="chart-card"><h4>Vendedores</h4><div class="chart-container"><canvas id="c-vend"></canvas></div></div>
+                <div class="chart-card"><h4>Zonas</h4><div class="chart-container"><canvas id="c-zon"></canvas></div></div>
+                <div class="chart-card"><h4>Giro</h4><div class="chart-container"><canvas id="c-gir"></canvas></div></div>
+                <div class="chart-card"><h4>Nivel Interés</h4><div class="chart-container"><canvas id="c-int"></canvas></div></div>
             </div>
         </div>
 
         <div id="lista" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
-            <div class="filter-row" id="filters-list"></div>
+            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
+            <div class="filter-row" id="filters-lista"></div>
             <div class="table-container">
                 <table id="mainTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0)">Alta</th>
-                            <th onclick="sortTable(1)">Impulsor</th>
-                            <th onclick="sortTable(2)">Negocio</th>
-                            <th onclick="sortTable(3)">Contacto</th>
-                            <th onclick="sortTable(4)">WhatsApp</th>
-                            <th onclick="sortTable(5)">Zona</th>
-                            <th onclick="sortTable(6)">Giro</th>
-                            <th onclick="sortTable(7)">Interés</th>
+                            <th onclick="sortTable(0, 'mainTable')">Fecha ↕</th>
+                            <th onclick="sortTable(1, 'mainTable')">Vendedor ↕</th>
+                            <th onclick="sortTable(2, 'mainTable')">Negocio ↕</th>
+                            <th onclick="sortTable(3, 'mainTable')">Giro ↕</th>
+                            <th onclick="sortTable(4, 'mainTable')">Zona ↕</th>
+                            <th onclick="sortTable(5, 'mainTable')">Interés ↕</th>
+                            <th>WhatsApp</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -172,253 +199,257 @@
         </div>
 
         <div id="mapa-view" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
+            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
             <div class="map-layout">
                 <div id="map"></div>
-                <button class="toggle-sidebar" onclick="toggleMapSidebar()">📋 VER LISTA Y FILTROS</button>
-                <div class="map-sidebar" id="mapSidebar">
-                    <div style="padding: 15px; border-bottom: 1px solid #eee; background: #f8f9fa;" id="filters-map"></div>
-                    <div class="client-list" id="mapList" style="overflow-y:auto; flex:1; padding:10px;"></div>
+                <div class="map-sidebar">
+                    <div style="padding:15px; border-bottom:1px solid #eee;" id="filters-map"></div>
+                    <div id="mapList" style="overflow-y:auto; flex:1; padding:10px;"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="clientModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">×</span>
-            <div id="modal-data"></div>
-        </div>
+        <div class="modal-content"><span class="close-btn" onclick="closeModal()">×</span><div id="modal-data"></div></div>
     </div>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQaNDGlyxQDLjTr_zSuJ0wlc9NZNaFpg6sfU2SNjyxyXHuttqPTSQGlQISm8A3avEyD-b7iRbdD8nxb/pub?gid=1161733578&single=true&output=csv';
-        let globalData = [], markersArray = [], colorMap = {};
+        let globalData = [], markersArray = [], colorMap = {}, charts = [];
         let map;
-        const palette = ['#003399', '#ffcc00', '#25D366', '#ff4444', '#8e44ad', '#f39c12', '#3498db', '#e67e22'];
+        const palette = ['#003399', '#f39c12', '#25D366', '#ff4444', '#8e44ad', '#3498db', '#e67e22', '#00b4d8'];
+        const mesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
         Chart.register(ChartDataLabels);
 
         function showView(id) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'mapa-view') setTimeout(() => map.invalidateSize(), 300);
+            if(id === 'mapa-view' && map) setTimeout(() => map.invalidateSize(), 400);
         }
 
         function closeModal() { document.getElementById('clientModal').style.display = "none"; }
-        function toggleMapSidebar() { document.getElementById('mapSidebar').classList.toggle('open'); }
-
-        function parseCoords(input) {
-            if (!input) return null;
-            const match = input.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
-            return match ? [parseFloat(match[1]), parseFloat(match[2])] : null;
-        }
-
-        function getImg(url) {
-            if (!url || url.trim().length < 10) return '';
-            let cleanUrl = url.trim();
-            if (cleanUrl.includes('drive.google.com')) {
+        function parseCoords(i) { if(!i) return null; let m = i.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/); return m ? [parseFloat(m[1]), parseFloat(m[2])] : null; }
+        
+        function getImg(u) { 
+            if(!u || u.length < 10) return ''; 
+            if (u.includes('drive.google.com')) {
                 let id = '';
-                if (cleanUrl.includes('id=')) id = cleanUrl.split('id=')[1].split('&')[0];
-                else if (cleanUrl.includes('/d/')) id = cleanUrl.split('/d/')[1].split('/')[0];
+                if (u.includes('id=')) id = u.split('id=')[1].split('&')[0];
+                else if (u.includes('/d/')) id = u.split('/d/')[1].split('/')[0];
                 return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
             }
-            return cleanUrl;
+            return u; 
         }
 
         map = L.map('map').setView([20.0842, -98.3672], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
         Papa.parse(csvUrl, {
             download: true, header: false,
             complete: function(results) {
-                globalData = results.data.filter(r => r[4]);
+                // FILTRAR FILAS VACÍAS O CABECERAS
+                globalData = results.data.slice(1).filter(r => r[4] && r[4].trim() !== "" && r[4] !== "NOMBRE DEL NEGOCIO");
                 processAll();
             }
         });
 
         function processAll() {
-            const sets = { v: new Set(), z: new Set(), g: new Set(), i: new Set() };
-            let stats = { vend: {}, zon: {}, gir: {}, int: {}, closed: 0 };
+            const sets = { v: new Set(), z: new Set(), g: new Set(), d: new Set(), m: new Set() };
+            let st = { vend: {}, zon: {}, gir: {}, int: {}, established: 0 };
 
-            globalData.slice(1).forEach(row => {
-                const vend = row[1];
-                const zona = row[3];
-                const giro = row[5];
-                const int = row[12];
-                const venta = row[15];
-
-                stats.vend[vend] = (stats.vend[vend] || 0) + 1;
-                stats.zon[zona] = (stats.zon[zona] || 0) + 1;
-                stats.gir[giro] = (stats.gir[giro] || 0) + 1;
-                stats.int[int] = (stats.int[int] || 0) + 1;
-                if(venta && venta.trim() !== "") stats.closed++;
+            globalData.forEach(row => {
+                const v = row[1], z = row[3], g = row[5], i = row[12], e = row[21], dFull = row[0]||"";
+                const d = dFull.split(' ')[0];
                 
-                sets.v.add(vend); sets.z.add(zona); sets.g.add(giro); sets.i.add(int);
-                if(!colorMap[vend]) colorMap[vend] = palette[Object.keys(colorMap).length % palette.length];
+                if(d.includes('/')) {
+                    const parts = d.split('/');
+                    const mesNum = parseInt(parts[1]);
+                    if(!isNaN(mesNum)) sets.m.add(mesNombres[mesNum-1]);
+                }
+
+                if(v && !colorMap[v]) colorMap[v] = palette[Object.keys(colorMap).length % palette.length];
+                if(d) sets.d.add(d); 
+                if(v) sets.v.add(v); 
+                if(z && z.trim() !== "") sets.z.add(z); 
+                if(g && g.trim() !== "") sets.g.add(g);
+
+                st.vend[v] = (st.vend[v]||0)+1; st.zon[z] = (st.zon[z]||0)+1; st.gir[g] = (st.gir[g]||0)+1; st.int[i] = (st.int[i]||0)+1;
+                if(e && e.toLowerCase().includes("establecido")) st.established++;
             });
 
-            const filterHTML = `
-                <input type="text" class="f-q" placeholder="🔍 Buscar..." onkeyup="multiFilter()">
-                <select class="f-v" onchange="multiFilter()"><option value="">Vendedor</option>${Array.from(sets.v).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
-                <select class="f-z" onchange="multiFilter()"><option value="">Zona</option>${Array.from(sets.z).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
-                <select class="f-i" onchange="multiFilter()"><option value="">Interés</option>${Array.from(sets.i).sort().map(v => `<option value="${v}">${v}</option>`).join('')}</select>
+            const filterTpl = (idPrefix) => `
+                <select id="${idPrefix}-m" onchange="runFilter('${idPrefix}')"><option value="">📅 Mes</option>${Array.from(sets.m).sort((a,b)=>mesNombres.indexOf(a)-mesNombres.indexOf(b)).map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="${idPrefix}-v" onchange="runFilter('${idPrefix}')"><option value="">👤 Vendedor</option>${Array.from(sets.v).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="${idPrefix}-d" onchange="runFilter('${idPrefix}')"><option value="">📅 Fecha Exacta</option>${Array.from(sets.d).sort().reverse().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="${idPrefix}-e" onchange="runFilter('${idPrefix}')"><option value="">🏷️ Estado</option><option value="cliente">⭐ Clientes</option><option value="prospecto">📌 Prospectos</option></select>
+                <select id="${idPrefix}-g" onchange="runFilter('${idPrefix}')"><option value="">🛠️ Giro</option>${Array.from(sets.g).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="${idPrefix}-z" onchange="runFilter('${idPrefix}')"><option value="">📍 Zona</option>${Array.from(sets.z).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
             `;
-            document.getElementById('filters-list').innerHTML = filterHTML;
-            document.getElementById('filters-map').innerHTML = filterHTML.replace(/multiFilter/g, 'multiFilterMap');
 
-            document.getElementById('stat-total').innerText = globalData.length - 1;
-            
-            // Listado de Vendedores en tarjeta principal
-            let vDet = ''; for(let v in stats.vend) vDet += `<div style="margin-bottom:4px;"><span style="color:${colorMap[v]}">●</span> ${v}: <b>${stats.vend[v]}</b></div>`;
-            document.getElementById('detail-vendedores').innerHTML = vDet;
+            document.getElementById('filters-lista').innerHTML = filterTpl('l');
+            document.getElementById('filters-map').innerHTML = filterTpl('m');
+            document.getElementById('filters-ventas').innerHTML = filterTpl('v');
 
-            // Listado de Zonas en tarjeta principal (RESTAURADO)
-            let zDet = ''; for(let z in stats.zon) zDet += `<div style="margin-bottom:4px;"><span style="color:var(--primary)">📍</span> ${z}: <b>${stats.zon[z]}</b></div>`;
-            document.getElementById('detail-zonas').innerHTML = zDet;
+            document.getElementById('total-count').innerText = globalData.length;
+            let vHtml = ''; for(let v in st.vend) vHtml += `<div><span style="color:${colorMap[v]}">●</span> ${v}: <b>${st.vend[v]}</b></div>`;
+            document.getElementById('v-list-detail').innerHTML = vHtml;
 
-            renderTable(globalData.slice(1));
-            renderMap(globalData.slice(1));
-            initCharts(stats);
+            renderTable(globalData);
+            renderVentas(globalData);
+            renderMap(globalData);
+            initCharts(st);
         }
 
         function renderTable(data) {
-            const body = document.getElementById('tableBody');
-            body.innerHTML = '';
-            data.forEach(row => {
+            const b = document.getElementById('tableBody'); b.innerHTML = '';
+            data.forEach(r => {
+                const isE = r[21] && r[21].toLowerCase().includes("establecido");
                 const tr = document.createElement('tr');
-                if (row[15] && row[15].trim() !== "") tr.className = "row-sold";
-                tr.innerHTML = `
-                    <td>${row[0]}</td>
-                    <td style="color:${colorMap[row[1]]}; font-weight:bold;">${row[1]}</td>
-                    <td>${row[4]}</td>
-                    <td><b>${row[6] || 'N/A'}</b> ${row[15] ? '<span class="badge-sold">VENTA</span>' : ''}</td>
-                    <td><a href="https://wa.me/${row[8].replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">🟢 WA</a></td>
-                    <td>${row[3]}</td><td>${row[5]}</td><td>${row[12]}</td>
-                `;
-                tr.onclick = (e) => { if(e.target.tagName !== 'A') openModal(row); };
-                body.appendChild(tr);
+                if(isE) tr.className = 'row-established';
+                tr.onclick = () => openModal(r);
+                tr.innerHTML = `<td>${r[0]}</td><td style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</td><td><b>${r[4]}</b> ${isE?'<span class="badge-status bg-established">CLIENTE</span>':''}</td><td>${r[5]}</td><td>${r[3]}</td><td>${r[12]}</td><td><a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" style="padding:5px 10px; background:var(--accent); color:white; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold;">WA</a></td>`;
+                b.appendChild(tr);
             });
+        }
+
+        function renderVentas(data) {
+            const b = document.getElementById('vtaTableBody'); b.innerHTML = '';
+            data.forEach(r => {
+                const isE = r[21] && r[21].toLowerCase().includes("establecido");
+                const a = parseFloat(r[23])||0, m = parseFloat(r[25])||0;
+                const tr = document.createElement('tr');
+                tr.style.cursor = 'pointer'; 
+                if(isE) tr.className = 'row-established';
+                tr.onclick = () => openModal(r);
+                tr.innerHTML = `<td style="font-family:monospace; font-weight:bold;">${r[22]||'---'}</td><td><b>${r[4]}</b></td><td style="color:${colorMap[r[1]]}; font-weight:bold;">${r[1]}</td><td>${isE?'<span class="badge-status bg-established">CLIENTE</span>':'<span style="color:#999;font-size:10px">PROSP.</span>'}</td><td style="text-align:center; background:#fff3e0;" class="${a>0?'vta-positiva':''}">${a}</td><td style="font-size:11px; color:#555;">${r[24]||''}</td><td style="text-align:center; background:#e1f5fe;" class="${m>0?'vta-positiva':''}">${m}</td><td style="font-size:11px; color:#555;">${r[26]||''}</td>`;
+                b.appendChild(tr);
+            });
+            updateVentaStats();
         }
 
         function renderMap(data) {
-            const mList = document.getElementById('mapList');
-            mList.innerHTML = '';
-            markersArray.forEach(m => map.removeLayer(m));
-            markersArray = [];
-
-            data.forEach(row => {
-                const vend = row[1];
-                const coords = parseCoords(row[10]);
-                if(coords) {
-                    const marker = L.circleMarker(coords, { radius: 10, fillColor: row[15] ? '#28a745' : colorMap[vend], color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(map);
-                    marker.bindPopup(`<b>${row[4]}</b><br>${vend}`);
-                    marker.on('click', () => openModal(row));
-                    markersArray.push(marker);
+            const l = document.getElementById('mapList'); l.innerHTML = '';
+            markersArray.forEach(m => map.removeLayer(m)); markersArray = [];
+            data.forEach(r => {
+                const c = parseCoords(r[10]), isE = r[21] && r[21].toLowerCase().includes("establecido");
+                if(c) {
+                    const m = L.circleMarker(c, { radius: 10, fillColor: isE?'#f39c12':colorMap[r[1]], color:'#fff', weight:2, fillOpacity:0.9 }).addTo(map);
+                    m.on('click', () => openModal(r)); markersArray.push(m);
                 }
-                const li = document.createElement('div');
-                li.className = `client-item ${row[15] ? 'row-sold' : ''}`;
-                li.style.padding = "10px"; li.style.borderBottom = "1px solid #eee"; li.style.cursor = "pointer";
-                li.innerHTML = `<b>${row[4]}</b><br><small><span style="color:${colorMap[vend]}">●</span> ${vend} | ${row[3]}</small>`;
-                li.onclick = () => { if(coords) map.setView(coords, 17); openModal(row); };
-                mList.appendChild(li);
+                const d = document.createElement('div');
+                d.style = `padding:10px; border-bottom:1px solid #eee; cursor:pointer; font-size:12px; ${isE?'background:#fff9db':''}`;
+                d.innerHTML = `<b>${r[4]}</b><br><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span> | <small>${r[3]}</small>`;
+                d.onclick = () => { if(c) map.setView(c, 17); openModal(r); };
+                l.appendChild(d);
             });
         }
 
-        function openModal(row) {
-            const [alta, vend, razon, zona, neg, giro, cont, tel, wha, , ubi, comp, int, obs, img, venta, v1, v2, v3, v4, v5] = row;
-            const coords = parseCoords(ubi);
-            let visitas = '';
-            [v1, v2, v3, v4, v5].forEach((v, idx) => { if(v && v.trim() !== "") visitas += `<div class="visit-card"><b>Visita ${idx+1}:</b> ${v}</div>`; });
+        function runFilter(prefix) {
+            const m = document.getElementById(prefix+'-m').value;
+            const v = document.getElementById(prefix+'-v').value;
+            const d = document.getElementById(prefix+'-d').value;
+            const e = document.getElementById(prefix+'-e').value;
+            const g = document.getElementById(prefix+'-g').value;
+            const z = document.getElementById(prefix+'-z').value;
 
-            let mediaHtml = '';
-            if (img && img.includes('<iframe')) {
-                mediaHtml = `<div class="img-preview" style="border:none;">${img.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="320"')}</div>`;
-            } else {
-                let imgSrc = getImg(img);
-                mediaHtml = `<img src="${imgSrc || 'https://via.placeholder.com/500x300?text=Sin+Imagen+Disponible'}" class="img-preview" onerror="this.src='https://via.placeholder.com/500x300?text=Error+al+cargar+imagen'">`;
-            }
+            const filtered = globalData.filter(r => {
+                const isE = r[21] && r[21].toLowerCase().includes("establecido");
+                const state = isE ? 'cliente' : 'prospecto';
+                let matchMes = true;
+                if(m !== "") {
+                    const dStr = r[0].split(' ')[0];
+                    const mesNum = parseInt(dStr.split('/')[1]);
+                    matchMes = mesNombres[mesNum-1] === m;
+                }
+                return matchMes && (!v || r[1] === v) && (!d || r[0].includes(d)) && (!e || state === e) && (!g || r[5] === g) && (!z || r[3] === z);
+            });
 
+            if(prefix === 'l') renderTable(filtered);
+            if(prefix === 'v') renderVentas(filtered);
+            if(prefix === 'm') renderMap(filtered);
+        }
+
+        function updateVentaStats() {
+            let sA = 0, sM = 0, totalRegistrosVisibles = 0, clientesEstablecidosVisibles = 0;
+            document.querySelectorAll('#vtaTableBody tr').forEach(tr => {
+                sA += parseFloat(tr.cells[4].innerText)||0;
+                sM += parseFloat(tr.cells[6].innerText)||0;
+                totalRegistrosVisibles++;
+                if(tr.classList.contains('row-established')) clientesEstablecidosVisibles++;
+            });
+            document.getElementById('vSum-abr').innerText = sA;
+            document.getElementById('vSum-may').innerText = sM;
+            document.getElementById('vSum-total').innerText = sA + sM;
+            document.getElementById('vConv-rate-vals').innerText = `${clientesEstablecidosVisibles} / ${totalRegistrosVisibles}`;
+            document.getElementById('vConv-rate').innerText = totalRegistrosVisibles > 0 
+                ? ((clientesEstablecidosVisibles / totalRegistrosVisibles) * 100).toFixed(1) + "%" : "0%";
+        }
+
+        function openModal(r) {
+            const isE = r[21] && r[21].toLowerCase().includes("establecido");
+            let vis = ''; [16,17,18,19,20].forEach((idx, i) => { if(r[idx] && r[idx].trim()!=='') vis += `<div class="visit-card"><b>Visita ${i+1}:</b> ${r[idx]}</div>`; });
+            const c = parseCoords(r[10]);
+            let media = r[14] && r[14].includes('<iframe') ? `<div class="img-preview">${r[14].replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="350"')}</div>` : `<img src="${getImg(r[14]) || 'https://via.placeholder.com/600x400?text=Llanterama+Hidalguense+2026'}" class="img-preview">`;
+            
             document.getElementById('modal-data').innerHTML = `
-                ${mediaHtml}
-                <h2 style="color:var(--primary); margin:0;">${neg} ${venta ? '✅' : ''}</h2>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13px; margin-top:15px;">
-                    <div><b>Impulsor:</b> ${vend}</div>
-                    <div><b>Zona:</b> ${zona}</div>
-                    <div><b>Contacto:</b> ${cont}</div>
-                    <div><b>WhatsApp:</b> ${wha}</div>
+                ${media}
+                <h2 style="color:var(--primary); margin:0;">${r[4]}</h2>
+                <div style="margin:10px 0;">${isE?'<span class="badge-status bg-established">CLIENTE ESTABLECIDO</span>':'<span class="badge-status" style="background:#888">PROSPECTO</span>'}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px; background:#f9f9f9; padding:15px; border-radius:15px; border:1px solid #eee;">
+                    <div><b>Impulsor:</b> <span style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</span></div>
+                    <div><b>Zona:</b> ${r[3]}</div>
+                    <div><b>Giro:</b> ${r[5]}</div>
+                    <div><b>WhatsApp:</b> ${r[8]}</div>
+                    <div><b>Interés:</b> ${r[12]}</div>
                 </div>
-                <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-                <p style="font-size:13px;"><b>Nivel de Interés:</b> <span style="color:var(--primary); font-weight:bold;">${int}</span></p>
-                <p style="font-size:13px;"><b>Giro:</b> ${giro}</p>
-                
-                ${venta ? `<div style="background:var(--sold); padding:12px; border-radius:10px; margin-top:10px; border:1px solid var(--sold-border);">
-                    <h4 style="margin:0; color:var(--sold-border);">💰 VENTA CONCRETADA</h4>
-                    <p style="margin:5px 0; font-size:13px;"><b>Factura/Detalle:</b> ${venta}</p>
-                </div>` : ''}
-
-                <h4 style="margin-top:20px; margin-bottom:10px; border-bottom:1px solid #eee;">Seguimiento</h4>
-                ${visitas || '<p style="font-size:12px; color:#999;">Sin visitas registradas.</p>'}
-                <p style="font-size:12px; background:#f0f4ff; padding:10px; border-radius:8px; margin-top:15px;"><b>Notas:</b><br>${obs || 'N/A'}</p>
-                
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
-                    <a href="https://wa.me/${wha.replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); text-align:center; margin:0;">WHATSAPP</a>
-                    ${coords ? `<a href="https://www.google.com/maps?q=${coords[0]},${coords[1]}" target="_blank" class="btn-label" style="text-align:center; margin:0;">ABRIR EN GPS</a>` : ''}
+                <div style="margin-top:15px; padding:12px; background:#fff7ed; border-radius:10px; font-size:12px; border:1px solid #ffedd5;"><b>Notas / Observaciones:</b><br>${r[13]||'Sin comentarios'}</div>
+                <h4 style="margin-top:20px; border-bottom:2px solid var(--secondary); padding-bottom:5px; color:var(--primary)">Bitácora de Seguimiento</h4>
+                ${vis || '<p style="font-size:12px; color:#999;">Sin visitas registradas.</p>'}
+                <div style="margin-top:25px; display:flex; gap:12px;">
+                    <a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); flex:1; text-align:center; padding:15px;">ENVIAR WHATSAPP</a>
+                    ${c ? `<a href="https://www.google.com/maps?q=${c[0]},${c[1]}" target="_blank" class="btn-label" style="background:var(--secondary); color:var(--primary); flex:1; text-align:center; padding:15px;">ABRIR GPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
         }
 
-        function multiFilter() {
-            const q = document.querySelector('#lista .f-q').value.toLowerCase();
-            const v = document.querySelector('#lista .f-v').value;
-            const z = document.querySelector('#lista .f-z').value;
-            const i = document.querySelector('#lista .f-i').value;
-            document.querySelectorAll('#tableBody tr').forEach(tr => {
-                const match = tr.innerText.toLowerCase().includes(q) && (!v || tr.cells[1].innerText === v) && (!z || tr.cells[5].innerText === z) && (!i || tr.cells[7].innerText === i);
-                tr.style.display = match ? '' : 'none';
-            });
+        function initCharts(st) {
+            charts.forEach(c => c.destroy());
+            const cfg = (ctx, data, isV = false) => new Chart(ctx, { type: 'pie', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: isV ? Object.keys(data).map(v => colorMap[v]) : palette }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { color: '#fff', font: { weight: 'bold' }, formatter: (val, ctx) => { let s = ctx.dataset.data.reduce((a,b)=>a+b,0); return (val*100/s).toFixed(0) + "%"; } } } } });
+            charts.push(cfg(document.getElementById('c-conv'), { "Clientes": st.established, "Prospectos": globalData.length - st.established }));
+            charts.push(cfg(document.getElementById('c-vend'), st.vend, true));
+            charts.push(cfg(document.getElementById('c-zon'), st.zon));
+            charts.push(cfg(document.getElementById('c-gir'), st.gir));
+            charts.push(cfg(document.getElementById('c-int'), st.int));
         }
 
-        function multiFilterMap() {
-            const q = document.querySelector('#filters-map .f-q').value.toLowerCase();
-            const v = document.querySelector('#filters-map .f-v').value;
-            const z = document.querySelector('#filters-map .f-z').value;
-            const i = document.querySelector('#filters-map .f-i').value;
-            const filtered = globalData.slice(1).filter(row => {
-                return row.join(' ').toLowerCase().includes(q) && (!v || row[1] === v) && (!z || row[3] === z) && (!i || row[12] === i);
-            });
-            renderMap(filtered);
-        }
-
-        function sortTable(n) {
-            const table = document.getElementById("mainTable");
-            let switching = true, dir = "asc", count = 0;
+        function sortTable(n, tableId) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById(tableId);
+            switching = true; dir = "asc";
             while (switching) {
-                switching = false;
-                let rows = table.rows;
-                for (var i = 1; i < (rows.length - 1); i++) {
-                    var s = false, x = rows[i].getElementsByTagName("TD")[n], y = rows[i + 1].getElementsByTagName("TD")[n];
-                    if (dir == "asc") { if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) { s = true; break; } }
-                    else { if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) { s = true; break; } }
+                switching = false; rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    let xVal = x.innerText.toLowerCase().trim();
+                    let yVal = y.innerText.toLowerCase().trim();
+                    let xNum = parseFloat(xVal.replace(/[^0-9.-]+/g,""));
+                    let yNum = parseFloat(yVal.replace(/[^0-9.-]+/g,""));
+                    if (!isNaN(xNum) && !isNaN(yNum) && xVal.length < 10) {
+                        if (dir == "asc") { if (xNum > yNum) { shouldSwitch = true; break; } } 
+                        else { if (xNum < yNum) { shouldSwitch = true; break; } }
+                    } else {
+                        if (dir == "asc") { if (xVal > yVal) { shouldSwitch = true; break; } } 
+                        else { if (xVal < yVal) { shouldSwitch = true; break; } }
+                    }
                 }
-                if (s) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; count++; }
-                else if (count == 0 && dir == "asc") { dir = "desc"; switching = true; }
+                if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; switchcount ++; } 
+                else { if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; } }
             }
-        }
-
-        function initCharts(stats) {
-            const cfg = (labelData, isVend = false, customColors = null) => ({
-                type: 'pie',
-                data: { labels: Object.keys(labelData), datasets: [{ data: Object.values(labelData), backgroundColor: customColors || (isVend ? Object.keys(labelData).map(v => colorMap[v]) : palette) }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { color: '#fff', font: { weight: 'bold', size: 14 }, formatter: (value, ctx) => { let sum = ctx.dataset.data.reduce((a, b) => a + b, 0); return ((value * 100) / (sum || 1)).toFixed(1) + "%"; } } } }
-            });
-            const convData = { "Ventas": stats.closed, "En Proceso": (globalData.length - 1) - stats.closed };
-            new Chart(document.getElementById('chartConv'), cfg(convData, false, ['#28a745', '#003399']));
-            new Chart(document.getElementById('chartVend'), cfg(stats.vend, true));
-            new Chart(document.getElementById('chartZon'), cfg(stats.zon));
-            new Chart(document.getElementById('chartGir'), cfg(stats.gir));
-            new Chart(document.getElementById('chartInt'), cfg(stats.int));
         }
     </script>
 </body>
