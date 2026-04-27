@@ -59,7 +59,7 @@
 
         /* FILTROS Y TABLA */
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
-        .filter-row select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 130px; font-size: 12px; }
+        .filter-row select { padding: 10px; border-radius: 8px; border-1px solid #ddd; flex: 1; min-width: 130px; font-size: 12px; }
         
         .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
@@ -73,10 +73,30 @@
         .vta-positiva { font-weight: bold; color: #155724; background: #d4edda; padding: 4px 8px; border-radius: 6px; border: 1px solid #c3e6cb; }
 
         /* MAPA */
-        .map-layout { display: flex; gap: 15px; height: 75vh; }
+        .map-layout { display: flex; gap: 15px; height: 75vh; position: relative; }
         #map { flex: 1; border-radius: 15px; border: 1px solid #ddd; z-index: 1; }
-        .map-sidebar { width: 380px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
+        .map-sidebar { width: 380px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; z-index: 2; }
         
+        /* BOTÓN LISTA MÓVIL */
+        .map-mobile-toggle { display: none; background: var(--primary); color: white; border: none; padding: 12px; width: 100%; font-weight: bold; border-radius: 10px 10px 0 0; cursor: pointer; margin-top: 10px; }
+
+        @media (max-width: 768px) {
+            .map-layout { flex-direction: column; height: 80vh; gap: 0; }
+            #map { height: 60%; width: 100%; flex: none; }
+            .map-sidebar { 
+                width: 100%; 
+                height: 40%; 
+                position: absolute; 
+                bottom: 0; 
+                left: 0; 
+                display: none; 
+                border-radius: 20px 20px 0 0;
+                box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+            }
+            .map-sidebar.open { display: flex; }
+            .map-mobile-toggle { display: block; }
+        }
+
         /* MODAL */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 2% auto; padding: 30px; width: 90%; max-width: 750px; border-radius: 25px; position: relative; max-height: 90vh; overflow-y: auto; }
@@ -200,11 +220,13 @@
 
         <div id="mapa-view" class="view-section">
             <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
+            <button class="map-mobile-toggle" onclick="toggleMapSidebar()">📋 VER LISTA DE UBICACIONES</button>
             <div class="map-layout">
                 <div id="map"></div>
-                <div class="map-sidebar">
+                <div class="map-sidebar" id="mapSidebar">
                     <div style="padding:15px; border-bottom:1px solid #eee;" id="filters-map"></div>
                     <div id="mapList" style="overflow-y:auto; flex:1; padding:10px;"></div>
+                    <button class="map-mobile-toggle" style="border-radius:0; background:#666;" onclick="toggleMapSidebar()">CERRAR LISTA</button>
                 </div>
             </div>
         </div>
@@ -226,7 +248,17 @@
         function showView(id) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'mapa-view' && map) setTimeout(() => map.invalidateSize(), 400);
+            if(id === 'mapa-view' && map) {
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 400);
+            }
+        }
+
+        function toggleMapSidebar() {
+            const sidebar = document.getElementById('mapSidebar');
+            sidebar.classList.toggle('open');
+            if(map) map.invalidateSize();
         }
 
         function closeModal() { document.getElementById('clientModal').style.display = "none"; }
@@ -334,8 +366,6 @@
             data.forEach(r => {
                 const c = parseCoords(r[10]), isE = r[21] && r[21].toLowerCase().includes("establecido");
                 if(c) {
-                    // AJUSTE: El fillColor ahora SIEMPRE coincide con colorMap[r[1]] (el vendedor)
-                    // Usamos el color de borde (color) para indicar si es cliente establecido
                     const m = L.circleMarker(c, { 
                         radius: 10, 
                         fillColor: colorMap[r[1]], 
@@ -348,7 +378,11 @@
                 const d = document.createElement('div');
                 d.style = `padding:10px; border-bottom:1px solid #eee; cursor:pointer; font-size:12px; ${isE?'background:#fff9db':''}`;
                 d.innerHTML = `<b>${r[4]}</b><br><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span> | <small>${r[3]}</small>`;
-                d.onclick = () => { if(c) map.setView(c, 17); openModal(r); };
+                d.onclick = () => { 
+                    if(c) map.setView(c, 17); 
+                    openModal(r); 
+                    if(window.innerWidth < 768) toggleMapSidebar();
+                };
                 l.appendChild(d);
             });
         }
