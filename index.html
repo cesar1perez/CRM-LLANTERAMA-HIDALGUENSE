@@ -29,7 +29,6 @@
             background: var(--white); padding: 12px 5%; display: flex;
             justify-content: space-between; align-items: center;
             border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .dynamic-title {
             font-size: 22px; font-weight: 900; text-transform: uppercase;
@@ -41,145 +40,94 @@
 
         .container { width: 95%; max-width: 1400px; margin: 20px auto; }
         .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .view-section.active { display: block; }
 
         .btn-back { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
 
-        /* DASHBOARD CARDS */
-        .home-hero { text-align: center; padding: 40px 20px; background: var(--white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #eee; }
+        /* ACCIONES PRINCIPALES */
         .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
         .action-btn { background: var(--white); padding: 30px; border-radius: 20px; text-align: center; cursor: pointer; border: 2px solid #eee; transition: 0.3s; display: flex; flex-direction: column; align-items: center; }
-        .action-btn:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .btn-label { background: var(--primary); color: white; padding: 10px 22px; border-radius: 50px; margin-top: 15px; font-weight: bold; font-size: 12px; }
+        .action-btn:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .btn-label { background: var(--primary); color: white; padding: 8px 20px; border-radius: 50px; margin-top: 15px; font-weight: bold; font-size: 12px; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .chart-card { background: var(--white); padding: 20px; border-radius: 15px; border: 1px solid #eee; text-align: center; }
-        .chart-container { position: relative; height: 250px; width: 100%; margin-top: 10px; }
-
-        /* FILTROS Y TABLA */
+        /* TABLAS Y FILTROS */
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
-        .filter-row select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 130px; font-size: 12px; }
+        .filter-row select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 130px; }
         
         .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
-        th { background: #f8f9fa; color: var(--primary); padding: 12px; text-align: left; cursor: pointer; border-bottom: 3px solid var(--secondary); white-space: nowrap; user-select: none; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1000px; }
+        th { background: #f8f9fa; color: var(--primary); padding: 12px; text-align: left; cursor: pointer; border-bottom: 3px solid var(--secondary); }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
         .row-established { background-color: var(--established) !important; border-left: 6px solid var(--established-border); }
-        .badge-status { padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; margin-left: 5px; color: white; text-transform: uppercase; }
-        .bg-established { background: var(--established-border); }
-        .vta-positiva { font-weight: bold; color: #155724; background: #d4edda; padding: 4px 8px; border-radius: 6px; border: 1px solid #c3e6cb; }
+        .badge-status { padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; text-transform: uppercase; }
 
         /* MAPA */
-        .map-layout { display: flex; gap: 15px; height: 75vh; }
+        .map-layout { display: flex; gap: 15px; height: 70vh; }
         #map { flex: 1; border-radius: 15px; border: 1px solid #ddd; z-index: 1; }
-        .map-sidebar { width: 380px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
-        
-        /* MODAL */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 2% auto; padding: 30px; width: 90%; max-width: 750px; border-radius: 25px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .close-btn { position: absolute; top: 15px; right: 25px; font-size: 40px; cursor: pointer; color: #333; }
-        .visit-card { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 4px solid var(--secondary); font-size: 12px; }
-        .img-preview { width: 100%; height: 350px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; background: #eee; }
+        .map-sidebar { width: 350px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
 
-        .tire-box { background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; text-align: center; flex: 1; min-width: 150px; }
-        .tire-box span { display: block; font-size: 24px; font-weight: 900; color: var(--primary); }
+        /* MODAL */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: white; margin: 5% auto; padding: 25px; width: 90%; max-width: 700px; border-radius: 20px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 15px; right: 25px; font-size: 30px; cursor: pointer; }
+        .img-preview { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; background: #eee; }
+
+        /* INDICADORES */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .chart-card { background: white; padding: 20px; border-radius: 15px; border: 1px solid #eee; text-align: center; }
+        .chart-container { position: relative; height: 220px; }
+        .tire-box { background: white; padding: 15px; border-radius: 12px; border: 1px solid #ddd; text-align: center; flex: 1; }
+        .tire-box span { display: block; font-size: 22px; font-weight: 900; color: var(--primary); }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="dynamic-title">Llanterama Hidalguense</div>
-        <div style="font-size: 11px; font-weight: 800; color: var(--primary);">SISTEMA DE GESTIÓN 2026</div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--primary);">CONTROL MAESTRO 2026</div>
     </nav>
 
     <div class="container">
         <div id="home" class="view-section active">
-            <div class="home-hero">
-                <div class="dynamic-title" style="font-size: 34px;">Panel de Control Hidalguense</div>
-                <p>Inteligencia de Datos y Seguimiento Comercial</p>
-            </div>
             <div class="action-grid">
                 <div class="action-btn" onclick="showView('stats-view')">
-                    <div style="font-size: 50px;">📊</div>
+                    <div style="font-size: 40px;">📊</div>
                     <h3>Estadísticas</h3>
                     <div class="btn-label">DASHBOARD</div>
                 </div>
                 <div class="action-btn" onclick="showView('lista')">
-                    <div style="font-size: 50px;">📋</div>
+                    <div style="font-size: 40px;">📋</div>
                     <h3>Prospectos</h3>
-                    <div class="btn-label">LISTADO GENERAL</div>
+                    <div class="btn-label">LISTADO</div>
                 </div>
                 <div class="action-btn" onclick="showView('mapa-view')">
-                    <div style="font-size: 50px;">📍</div>
-                    <h3>Mapa Logístico</h3>
-                    <div class="btn-label" style="background:var(--secondary); color:var(--primary);">UBICACIONES</div>
+                    <div style="font-size: 40px;">📍</div>
+                    <h3>Ubicaciones</h3>
+                    <div class="btn-label">MAPA</div>
                 </div>
-                <div class="action-btn" onclick="showView('ventas-view')" style="border-color: var(--secondary);">
-                    <div style="font-size: 50px;">🛞</div>
-                    <h3 style="color:var(--primary)">Ventas Mensuales</h3>
-                    <div class="btn-label" style="background:var(--secondary); color:var(--primary);">ESTADÍSTICA VTA</div>
+                <div class="action-btn" onclick="showView('ventas-view')">
+                    <div style="font-size: 40px;">🛞</div>
+                    <h3>Ventas</h3>
+                    <div class="btn-label">CONTROL VTA</div>
                 </div>
-            </div>
-        </div>
-
-        <div id="ventas-view" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
-            <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-                <div class="tire-box"><label>Abril</label><span id="vSum-abr">0</span></div>
-                <div class="tire-box"><label>Mayo</label><span id="vSum-may">0</span></div>
-                <div class="tire-box" style="background: var(--primary); color:white;"><label>Total</label><span id="vSum-total" style="color:white">0</span></div>
-            </div>
-            <div class="filter-row" id="filters-ventas"></div>
-            <div class="table-container">
-                <table id="salesTable">
-                    <thead>
-                        <tr>
-                            <th onclick="sortTable(0, 'salesTable')">Código ↕</th>
-                            <th onclick="sortTable(1, 'salesTable')">Negocio ↕</th>
-                            <th onclick="sortTable(2, 'salesTable')">Vendedor ↕</th>
-                            <th onclick="sortTable(3, 'salesTable')">Estado ↕</th>
-                            <th style="background:#fff3e0;">ABRIL</th>
-                            <th>Obs. Abril</th>
-                            <th style="background:#e1f5fe;">MAYO</th>
-                            <th>Obs. Mayo</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vtaTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="stats-view" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
-            <div class="stats-grid">
-                <div class="chart-card">
-                    <h4>Total Prospectos</h4>
-                    <div style="font-size: 40px; font-weight: 900; color: var(--primary);" id="total-count">0</div>
-                    <div id="v-list-detail" style="text-align:left; font-size:12px; margin-top:10px; border-top:1px solid #eee; padding-top:10px;"></div>
-                </div>
-                <div class="chart-card"><h4>Efectividad</h4><div class="chart-container"><canvas id="c-conv"></canvas></div></div>
-                <div class="chart-card"><h4>Impulsores</h4><div class="chart-container"><canvas id="c-vend"></canvas></div></div>
-                <div class="chart-card"><h4>Zonas</h4><div class="chart-container"><canvas id="c-zon"></canvas></div></div>
-                <div class="chart-card"><h4>Giro</h4><div class="chart-container"><canvas id="c-gir"></canvas></div></div>
             </div>
         </div>
 
         <div id="lista" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
+            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
             <div class="filter-row" id="filters-lista"></div>
             <div class="table-container">
                 <table id="mainTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0, 'mainTable')">Fecha ↕</th>
-                            <th onclick="sortTable(1, 'mainTable')">Vendedor ↕</th>
-                            <th onclick="sortTable(2, 'mainTable')">Negocio ↕</th>
-                            <th onclick="sortTable(3, 'mainTable')">Giro ↕</th>
-                            <th onclick="sortTable(4, 'mainTable')">Zona ↕</th>
-                            <th onclick="sortTable(5, 'mainTable')">Interés ↕</th>
-                            <th>WhatsApp</th>
+                            <th>Fecha</th>
+                            <th>Vendedor</th>
+                            <th>Negocio</th>
+                            <th>Giro</th>
+                            <th>Zona</th>
+                            <th>Interés</th>
+                            <th>WA</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -187,14 +135,49 @@
             </div>
         </div>
 
+        <div id="ventas-view" class="view-section">
+            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <div class="tire-box"><label>Abril</label><span id="vSum-abr">0</span></div>
+                <div class="tire-box"><label>Mayo</label><span id="vSum-may">0</span></div>
+                <div class="tire-box" style="background:var(--primary); color:white;"><label>Total</label><span id="vSum-total" style="color:white">0</span></div>
+            </div>
+            <div class="filter-row" id="filters-ventas"></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Negocio</th>
+                            <th>Vendedor</th>
+                            <th>Estado</th>
+                            <th style="background:#fff3e0">Abril</th>
+                            <th style="background:#e1f5fe">Mayo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vtaTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="mapa-view" class="view-section">
-            <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
+            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
             <div class="map-layout">
                 <div id="map"></div>
                 <div class="map-sidebar">
-                    <div style="padding:15px; border-bottom:1px solid #eee;" id="filters-map"></div>
-                    <div id="mapList" style="overflow-y:auto; flex:1; padding:10px;"></div>
+                    <div style="padding:10px; border-bottom:1px solid #eee;" id="filters-map"></div>
+                    <div id="mapList" style="overflow-y:auto; flex:1;"></div>
                 </div>
+            </div>
+        </div>
+
+        <div id="stats-view" class="view-section">
+            <button class="btn-back" onclick="showView('home')">← VOLVER</button>
+            <div class="stats-grid">
+                <div class="chart-card"><h4>Efectividad</h4><div class="chart-container"><canvas id="c-conv"></canvas></div></div>
+                <div class="chart-card"><h4>Impulsores</h4><div class="chart-container"><canvas id="c-vend"></canvas></div></div>
+                <div class="chart-card"><h4>Zonas</h4><div class="chart-container"><canvas id="c-zon"></canvas></div></div>
+                <div class="chart-card"><h4>Giros</h4><div class="chart-container"><canvas id="c-gir"></canvas></div></div>
             </div>
         </div>
     </div>
@@ -208,76 +191,62 @@
         let globalData = [], markersArray = [], colorMap = {}, charts = [];
         let map;
         const palette = ['#003399', '#f39c12', '#25D366', '#e91e63', '#9c27b0', '#00bcd4', '#ff5722', '#607d8b'];
-        const mesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
         function showView(id) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'mapa-view' && map) setTimeout(() => map.invalidateSize(), 400);
+            if(id === 'mapa-view' && map) setTimeout(() => map.invalidateSize(), 300);
         }
 
         function closeModal() { document.getElementById('clientModal').style.display = "none"; }
-        
+
         function parseCoords(i) { 
             if(!i) return null; 
             let m = i.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/); 
             return m ? [parseFloat(m[1]), parseFloat(m[2])] : null; 
         }
-        
+
         function getImg(u) { 
             if(!u || u.length < 10) return ''; 
             if (u.includes('drive.google.com')) {
                 let id = u.includes('id=') ? u.split('id=')[1].split('&')[0] : u.split('/d/')[1].split('/')[0];
-                return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+                return `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
             }
             return u; 
         }
 
+        // MAPA INICIAL
         map = L.map('map').setView([20.0842, -98.3672], 12);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
+        // CARGA DE DATOS
         Papa.parse(csvUrl, {
             download: true, header: false,
             complete: function(results) {
-                globalData = results.data.slice(1).filter(r => r[4] && r[4].trim() !== "" && r[4] !== "NOMBRE DEL NEGOCIO");
+                globalData = results.data.slice(1).filter(r => r[4] && r[4].trim() !== "");
                 processAll();
             }
         });
 
         function processAll() {
-            const sets = { v: new Set(), z: new Set(), g: new Set(), d: new Set(), m: new Set() };
-            let st = { vend: {}, zon: {}, gir: {}, int: {}, established: 0 };
+            const vSet = new Set(), zSet = new Set(), gSet = new Set();
+            let st = { vend: {}, zon: {}, gir: {}, est: 0 };
 
-            globalData.forEach(row => {
-                const v = row[1], z = row[3], g = row[5], i = row[12], e = row[21], dFull = row[0]||"";
-                const d = dFull.split(' ')[0];
+            globalData.forEach(r => {
+                const v = r[1], z = r[3], g = r[5], isE = r[21] && r[21].toLowerCase().includes("establecido");
                 if(v && !colorMap[v]) colorMap[v] = palette[Object.keys(colorMap).length % palette.length];
-                if(d.includes('/')) {
-                    const parts = d.split('/');
-                    const mesNum = parseInt(parts[1]);
-                    if(!isNaN(mesNum)) sets.m.add(mesNombres[mesNum-1]);
-                }
-                if(d) sets.d.add(d); 
-                if(v) sets.v.add(v); 
-                if(z) sets.z.add(z); 
-                if(g) sets.g.add(g);
-                st.vend[v] = (st.vend[v]||0)+1; st.zon[z] = (st.zon[z]||0)+1; st.gir[g] = (st.gir[g]||0)+1; st.int[i] = (st.int[i]||0)+1;
-                if(e && e.toLowerCase().includes("establecido")) st.established++;
+                if(v) vSet.add(v); if(z) zSet.add(z); if(g) gSet.add(g);
+                st.vend[v] = (st.vend[v]||0)+1; st.zon[z] = (st.zon[z]||0)+1; st.gir[g] = (st.gir[g]||0)+1;
+                if(isE) st.est++;
             });
 
-            const filterTpl = (idPrefix) => `
-                <select id="${idPrefix}-m" onchange="runFilter('${idPrefix}')"><option value="">📅 Mes</option>${Array.from(sets.m).map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
-                <select id="${idPrefix}-v" onchange="runFilter('${idPrefix}')"><option value="">👤 Vendedor</option>${Array.from(sets.v).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
-                <select id="${idPrefix}-e" onchange="runFilter('${idPrefix}')"><option value="">🏷️ Estado</option><option value="cliente">⭐ Clientes</option><option value="prospecto">📌 Prospectos</option></select>
+            const filterTpl = (id) => `
+                <select id="${id}-v" onchange="runFilter('${id}')"><option value="">👤 Vendedor</option>${Array.from(vSet).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="${id}-z" onchange="runFilter('${id}')"><option value="">📍 Zona</option>${Array.from(zSet).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
             `;
-
             document.getElementById('filters-lista').innerHTML = filterTpl('l');
-            document.getElementById('filters-map').innerHTML = filterTpl('m');
             document.getElementById('filters-ventas').innerHTML = filterTpl('v');
-
-            document.getElementById('total-count').innerText = globalData.length;
-            let vHtml = ''; for(let v in st.vend) vHtml += `<div><span style="color:${colorMap[v]}">●</span> ${v}: <b>${st.vend[v]}</b></div>`;
-            document.getElementById('v-list-detail').innerHTML = vHtml;
+            document.getElementById('filters-map').innerHTML = filterTpl('m');
 
             renderTable(globalData);
             renderVentas(globalData);
@@ -292,7 +261,7 @@
                 const tr = document.createElement('tr');
                 if(isE) tr.className = 'row-established';
                 tr.onclick = () => openModal(r);
-                tr.innerHTML = `<td>${r[0]}</td><td style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</td><td><b>${r[4]}</b> ${isE?'<span class="badge-status bg-established">CLIENTE</span>':''}</td><td>${r[5]}</td><td>${r[3]}</td><td>${r[12]}</td><td><a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" style="padding:5px 10px; background:var(--accent); color:white; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold;">WA</a></td>`;
+                tr.innerHTML = `<td>${r[0]}</td><td style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</td><td><b>${r[4]}</b></td><td>${r[5]}</td><td>${r[3]}</td><td>${r[12]}</td><td><a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" style="color:green; font-weight:bold;">WA</a></td>`;
                 b.appendChild(tr);
             });
         }
@@ -307,7 +276,7 @@
                 const tr = document.createElement('tr');
                 if(isE) tr.className = 'row-established';
                 tr.onclick = () => openModal(r);
-                tr.innerHTML = `<td>${r[22]||'---'}</td><td><b>${r[4]}</b></td><td style="color:${colorMap[r[1]]}; font-weight:bold;">${r[1]}</td><td>${isE?'CLIENTE':'PROSP.'}</td><td style="text-align:center; background:#fff3e0;">${a}</td><td>${r[24]||''}</td><td style="text-align:center; background:#e1f5fe;">${m}</td><td>${r[26]||''}</td>`;
+                tr.innerHTML = `<td>${r[22]||'-'}</td><td>${r[4]}</td><td style="color:${colorMap[r[1]]}; font-weight:bold;">${r[1]}</td><td>${isE?'CLIENTE':'PROSP.'}</td><td style="text-align:center;">${a}</td><td style="text-align:center;">${m}</td>`;
                 b.appendChild(tr);
             });
             document.getElementById('vSum-abr').innerText = sA;
@@ -326,51 +295,33 @@
                 }
                 const d = document.createElement('div');
                 d.style = `padding:10px; border-bottom:1px solid #eee; cursor:pointer; font-size:12px; ${isE?'background:#fff9db':''}`;
-                d.innerHTML = `<b>${r[4]}</b><br><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span> | <small>${r[3]}</small>`;
-                d.onclick = () => { if(c) map.setView(c, 17); openModal(r); };
+                d.innerHTML = `<b>${r[4]}</b><br><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span>`;
+                d.onclick = () => { if(c) map.setView(c, 16); openModal(r); };
                 l.appendChild(d);
             });
         }
 
-        function runFilter(prefix) {
-            const m = document.getElementById(prefix+'-m').value;
-            const v = document.getElementById(prefix+'-v').value;
-            const e = document.getElementById(prefix+'-e').value;
-            const filtered = globalData.filter(r => {
-                const isE = r[21] && r[21].toLowerCase().includes("establecido");
-                const state = isE ? 'cliente' : 'prospecto';
-                let matchMes = true;
-                if(m !== "") {
-                    const dStr = r[0].split(' ')[0];
-                    const mesNum = parseInt(dStr.split('/')[1]);
-                    matchMes = mesNombres[mesNum-1] === m;
-                }
-                return matchMes && (!v || r[1] === v) && (!e || state === e);
-            });
-            if(prefix === 'l') renderTable(filtered);
-            if(prefix === 'v') renderVentas(filtered);
-            if(prefix === 'm') renderMap(filtered);
+        function runFilter(p) {
+            const v = document.getElementById(p+'-v').value;
+            const z = document.getElementById(p+'-z').value;
+            const filtered = globalData.filter(r => (!v || r[1] === v) && (!z || r[3] === z));
+            if(p === 'l') renderTable(filtered);
+            if(p === 'v') renderVentas(filtered);
+            if(p === 'm') renderMap(filtered);
         }
 
         function openModal(r) {
             const isE = r[21] && r[21].toLowerCase().includes("establecido");
-            let vis = ''; [16,17,18,19,20].forEach((idx, i) => { if(r[idx] && r[idx].trim()!=='') vis += `<div class="visit-card"><b>Visita ${i+1}:</b> ${r[idx]}</div>`; });
-            const c = parseCoords(r[10]);
-            let media = `<img src="${getImg(r[14]) || 'https://via.placeholder.com/600x400?text=Llanterama+Hidalguense'}" class="img-preview">`;
-            
+            let vis = ''; [16,17,18,19,20].forEach((idx, i) => { if(r[idx] && r[idx].trim()!=='') vis += `<div><b>V${i+1}:</b> ${r[idx]}</div>`; });
             document.getElementById('modal-data').innerHTML = `
-                ${media}
-                <h2 style="color:var(--primary); margin:0;">${r[4]}</h2>
-                <div style="margin:10px 0;">${isE?'<span class="badge-status bg-established">CLIENTE</span>':'<span class="badge-status" style="background:#888">PROSPECTO</span>'}</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;">
-                    <div><b>Impulsor:</b> <span style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</span></div>
-                    <div><b>Zona:</b> ${r[3]}</div>
-                </div>
-                <h4 style="margin-top:20px; border-bottom:2px solid var(--secondary); color:var(--primary)">Seguimiento</h4>
-                ${vis || '<p>Sin visitas.</p>'}
-                <div style="margin-top:20px; display:flex; gap:10px;">
-                    <a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); flex:1; text-align:center;">WHATSAPP</a>
-                    ${c ? `<a href="https://www.google.com/maps?q=${c[0]},${c[1]}" target="_blank" class="btn-label" style="background:var(--secondary); color:var(--primary); flex:1; text-align:center;">MAPA</a>` : ''}
+                <img src="${getImg(r[14]) || 'https://via.placeholder.com/400x200'}" class="img-preview">
+                <h2>${r[4]}</h2>
+                <p><b>Vendedor:</b> <span style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</span></p>
+                <p><b>Zona:</b> ${r[3]} | <b>Giro:</b> ${r[5]}</p>
+                <hr>
+                <h4>Seguimiento</h4>${vis || 'Sin visitas'}
+                <div style="margin-top:20px;">
+                    <a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" style="padding:10px; background:green; color:white; border-radius:8px; text-decoration:none;">WHATSAPP</a>
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
@@ -378,30 +329,15 @@
 
         function initCharts(st) {
             charts.forEach(c => c.destroy());
-            const cfg = (ctx, data, isV = false) => new Chart(ctx, { 
-                type: 'pie', 
-                data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: isV ? Object.keys(data).map(v => colorMap[v]) : palette }] }, 
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } 
+            const cfg = (ctx, labels, data, colors) => new Chart(ctx, {
+                type: 'pie',
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
-            charts.push(cfg(document.getElementById('c-conv'), { "Clientes": st.established, "Prospectos": globalData.length - st.established }));
-            charts.push(cfg(document.getElementById('c-vend'), st.vend, true));
-            charts.push(cfg(document.getElementById('c-zon'), st.zon));
-            charts.push(cfg(document.getElementById('c-gir'), st.gir));
-        }
-
-        function sortTable(n, tableId) {
-            var table = document.getElementById(tableId), rows = table.rows, switching = true, i, x, y, shouldSwitch, dir = "asc", switchcount = 0;
-            while (switching) {
-                switching = false;
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[n]; y = rows[i+1].getElementsByTagName("TD")[n];
-                    if (dir == "asc") { if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) { shouldSwitch = true; break; } }
-                    else { if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) { shouldSwitch = true; break; } }
-                }
-                if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; switchcount ++; } 
-                else { if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; } }
-            }
+            charts.push(cfg(document.getElementById('c-conv'), ['Cliente', 'Prospecto'], [st.est, globalData.length - st.est], ['#f39c12', '#ddd']));
+            charts.push(cfg(document.getElementById('c-vend'), Object.keys(st.vend), Object.values(st.vend), Object.keys(st.vend).map(v => colorMap[v])));
+            charts.push(cfg(document.getElementById('c-zon'), Object.keys(st.zon), Object.values(st.zon), palette));
+            charts.push(cfg(document.getElementById('c-gir'), Object.keys(st.gir), Object.values(st.gir), palette));
         }
     </script>
 </body>
