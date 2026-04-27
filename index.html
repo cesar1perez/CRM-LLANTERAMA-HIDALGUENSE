@@ -12,8 +12,8 @@
     
     <style>
         :root {
-            --primary: #003399;
-            --secondary: #ffcc00;
+            --primary: #003399; /* Azul Hidalguense */
+            --secondary: #ffcc00; /* Oro Hidalguense */
             --accent: #25D366;
             --established: #fff9db;
             --established-border: #f39c12;
@@ -46,7 +46,7 @@
 
         .btn-back { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
 
-        /* DASHBOARD */
+        /* DASHBOARD CARDS */
         .home-hero { text-align: center; padding: 40px 20px; background: var(--white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #eee; }
         .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
         .action-btn { background: var(--white); padding: 30px; border-radius: 20px; text-align: center; text-decoration: none; color: var(--text); border: 2px solid #eee; transition: 0.3s; display: flex; flex-direction: column; align-items: center; }
@@ -96,7 +96,7 @@
 
     <nav>
         <div class="dynamic-title">Llanterama Hidalguense</div>
-        <div style="font-size: 11px; font-weight: 800; color: var(--primary);">CONTROL DE GESTIÓN 2026</div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--primary);">SISTEMA DE GESTIÓN 2026</div>
     </nav>
 
     <div class="container">
@@ -170,7 +170,7 @@
                     <div id="v-list-detail" style="text-align:left; font-size:12px; margin-top:10px; border-top:1px solid #eee; padding-top:10px;"></div>
                 </div>
                 <div class="chart-card"><h4>Efectividad (Prospecto vs Cliente)</h4><div class="chart-container"><canvas id="c-conv"></canvas></div></div>
-                <div class="chart-card"><h4>Vendedores</h4><div class="chart-container"><canvas id="c-vend"></canvas></div></div>
+                <div class="chart-card"><h4>Rendimiento Impulsores</h4><div class="chart-container"><canvas id="c-vend"></canvas></div></div>
                 <div class="chart-card"><h4>Zonas</h4><div class="chart-container"><canvas id="c-zon"></canvas></div></div>
                 <div class="chart-card"><h4>Giro</h4><div class="chart-container"><canvas id="c-gir"></canvas></div></div>
                 <div class="chart-card"><h4>Nivel Interés</h4><div class="chart-container"><canvas id="c-int"></canvas></div></div>
@@ -218,7 +218,8 @@
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQaNDGlyxQDLjTr_zSuJ0wlc9NZNaFpg6sfU2SNjyxyXHuttqPTSQGlQISm8A3avEyD-b7iRbdD8nxb/pub?gid=1161733578&single=true&output=csv';
         let globalData = [], markersArray = [], colorMap = {}, charts = [];
         let map;
-        const palette = ['#003399', '#f39c12', '#25D366', '#ff4444', '#8e44ad', '#3498db', '#e67e22', '#00b4d8'];
+        // Paleta profesional de colores para Impulsores
+        const palette = ['#003399', '#f39c12', '#25D366', '#e91e63', '#9c27b0', '#00bcd4', '#ff5722', '#607d8b'];
         const mesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
         Chart.register(ChartDataLabels);
@@ -249,7 +250,6 @@
         Papa.parse(csvUrl, {
             download: true, header: false,
             complete: function(results) {
-                // FILTRAR FILAS VACÍAS O CABECERAS
                 globalData = results.data.slice(1).filter(r => r[4] && r[4].trim() !== "" && r[4] !== "NOMBRE DEL NEGOCIO");
                 processAll();
             }
@@ -263,13 +263,17 @@
                 const v = row[1], z = row[3], g = row[5], i = row[12], e = row[21], dFull = row[0]||"";
                 const d = dFull.split(' ')[0];
                 
+                // Mapear colores de forma única por Impulsor
+                if(v && !colorMap[v]) {
+                    colorMap[v] = palette[Object.keys(colorMap).length % palette.length];
+                }
+
                 if(d.includes('/')) {
                     const parts = d.split('/');
                     const mesNum = parseInt(parts[1]);
                     if(!isNaN(mesNum)) sets.m.add(mesNombres[mesNum-1]);
                 }
 
-                if(v && !colorMap[v]) colorMap[v] = palette[Object.keys(colorMap).length % palette.length];
                 if(d) sets.d.add(d); 
                 if(v) sets.v.add(v); 
                 if(z && z.trim() !== "") sets.z.add(z); 
@@ -309,6 +313,7 @@
                 const tr = document.createElement('tr');
                 if(isE) tr.className = 'row-established';
                 tr.onclick = () => openModal(r);
+                // Color sincronizado en el nombre del Impulsor
                 tr.innerHTML = `<td>${r[0]}</td><td style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</td><td><b>${r[4]}</b> ${isE?'<span class="badge-status bg-established">CLIENTE</span>':''}</td><td>${r[5]}</td><td>${r[3]}</td><td>${r[12]}</td><td><a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" style="padding:5px 10px; background:var(--accent); color:white; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold;">WA</a></td>`;
                 b.appendChild(tr);
             });
@@ -335,11 +340,19 @@
             data.forEach(r => {
                 const c = parseCoords(r[10]), isE = r[21] && r[21].toLowerCase().includes("establecido");
                 if(c) {
-                    const m = L.circleMarker(c, { radius: 10, fillColor: isE?'#f39c12':colorMap[r[1]], color:'#fff', weight:2, fillOpacity:0.9 }).addTo(map);
+                    // Color sincronizado en el marcador del mapa
+                    const m = L.circleMarker(c, { 
+                        radius: 11, 
+                        fillColor: colorMap[r[1]], 
+                        color: isE ? var('--secondary') : '#fff', 
+                        weight: isE ? 4 : 2, 
+                        fillOpacity: 0.9 
+                    }).addTo(map);
                     m.on('click', () => openModal(r)); markersArray.push(m);
                 }
                 const d = document.createElement('div');
                 d.style = `padding:10px; border-bottom:1px solid #eee; cursor:pointer; font-size:12px; ${isE?'background:#fff9db':''}`;
+                // Color sincronizado en el dot de la lista lateral
                 d.innerHTML = `<b>${r[4]}</b><br><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span> | <small>${r[3]}</small>`;
                 d.onclick = () => { if(c) map.setView(c, 17); openModal(r); };
                 l.appendChild(d);
@@ -372,19 +385,17 @@
         }
 
         function updateVentaStats() {
-            let sA = 0, sM = 0, totalRegistrosVisibles = 0, clientesEstablecidosVisibles = 0;
+            let sA = 0, sM = 0, tot = 0, cli = 0;
             document.querySelectorAll('#vtaTableBody tr').forEach(tr => {
                 sA += parseFloat(tr.cells[4].innerText)||0;
                 sM += parseFloat(tr.cells[6].innerText)||0;
-                totalRegistrosVisibles++;
-                if(tr.classList.contains('row-established')) clientesEstablecidosVisibles++;
+                tot++; if(tr.classList.contains('row-established')) cli++;
             });
             document.getElementById('vSum-abr').innerText = sA;
             document.getElementById('vSum-may').innerText = sM;
             document.getElementById('vSum-total').innerText = sA + sM;
-            document.getElementById('vConv-rate-vals').innerText = `${clientesEstablecidosVisibles} / ${totalRegistrosVisibles}`;
-            document.getElementById('vConv-rate').innerText = totalRegistrosVisibles > 0 
-                ? ((clientesEstablecidosVisibles / totalRegistrosVisibles) * 100).toFixed(1) + "%" : "0%";
+            document.getElementById('vConv-rate-vals').innerText = `${cli} / ${tot}`;
+            document.getElementById('vConv-rate').innerText = tot > 0 ? ((cli / tot) * 100).toFixed(1) + "%" : "0%";
         }
 
         function openModal(r) {
@@ -417,7 +428,29 @@
 
         function initCharts(st) {
             charts.forEach(c => c.destroy());
-            const cfg = (ctx, data, isV = false) => new Chart(ctx, { type: 'pie', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: isV ? Object.keys(data).map(v => colorMap[v]) : palette }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { color: '#fff', font: { weight: 'bold' }, formatter: (val, ctx) => { let s = ctx.dataset.data.reduce((a,b)=>a+b,0); return (val*100/s).toFixed(0) + "%"; } } } } });
+            const cfg = (ctx, data, isV = false) => new Chart(ctx, { 
+                type: 'pie', 
+                data: { 
+                    labels: Object.keys(data), 
+                    datasets: [{ 
+                        data: Object.values(data), 
+                        // Color sincronizado en las gráficas de Impulsores
+                        backgroundColor: isV ? Object.keys(data).map(v => colorMap[v]) : palette 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { display: false }, 
+                        datalabels: { 
+                            color: '#fff', 
+                            font: { weight: 'bold' }, 
+                            formatter: (val, ctx) => { let s = ctx.dataset.data.reduce((a,b)=>a+b,0); return (val*100/s).toFixed(0) + "%"; } 
+                        } 
+                    } 
+                } 
+            });
             charts.push(cfg(document.getElementById('c-conv'), { "Clientes": st.established, "Prospectos": globalData.length - st.established }));
             charts.push(cfg(document.getElementById('c-vend'), st.vend, true));
             charts.push(cfg(document.getElementById('c-zon'), st.zon));
