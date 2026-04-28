@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Llanterama Hidalguense - Control Maestro 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -59,7 +59,7 @@
 
         /* FILTROS Y TABLA */
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
-        .filter-row select { padding: 10px; border-radius: 8px; border-1px solid #ddd; flex: 1; min-width: 130px; font-size: 12px; }
+        .filter-row select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex: 1; min-width: 130px; font-size: 12px; }
         
         .table-container { background: white; padding: 10px; border-radius: 15px; overflow-x: auto; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
@@ -72,33 +72,69 @@
         .bg-established { background: var(--established-border); }
         .vta-positiva { font-weight: bold; color: #155724; background: #d4edda; padding: 4px 8px; border-radius: 6px; border: 1px solid #c3e6cb; }
 
-        /* MAPA */
-        .map-layout { display: flex; gap: 15px; height: 75vh; position: relative; }
-        #map { flex: 1; border-radius: 15px; border: 1px solid #ddd; z-index: 1; }
-        .map-sidebar { width: 380px; background: white; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; z-index: 2; }
+        /* MAPA MEJORADO PARA MÓVILES */
+        .map-layout { display: flex; gap: 15px; height: 75vh; position: relative; border-radius: 15px; overflow: hidden; }
+        #map { flex: 1; border: 1px solid #ddd; z-index: 1; border-radius: 15px; }
         
-        /* BOTÓN LISTA MÓVIL */
-        .map-mobile-toggle { display: none; background: var(--primary); color: white; border: none; padding: 12px; width: 100%; font-weight: bold; border-radius: 10px 10px 0 0; cursor: pointer; margin-top: 10px; }
+        .map-sidebar { 
+            width: 380px; 
+            background: white; 
+            display: flex; 
+            flex-direction: column; 
+            border: 1px solid #ddd; 
+            z-index: 10; 
+            border-radius: 15px;
+        }
+
+        .map-mobile-toggle { 
+            display: none; 
+            position: fixed; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 1001; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 15px 25px; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
 
         @media (max-width: 768px) {
-            .map-layout { flex-direction: column; height: 80vh; gap: 0; }
-            #map { height: 60%; width: 100%; flex: none; }
-            .map-sidebar { 
-                width: 100%; 
-                height: 40%; 
-                position: absolute; 
-                bottom: 0; 
-                left: 0; 
-                display: none; 
-                border-radius: 20px 20px 0 0;
-                box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+            .map-layout { height: 70vh; }
+            .map-sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 80vh;
+                transform: translateY(100%);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 2005;
+                border-radius: 25px 25px 0 0;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
             }
-            .map-sidebar.open { display: flex; }
+            .map-sidebar.open { transform: translateY(0); }
             .map-mobile-toggle { display: block; }
+            #map { border-radius: 15px; }
+            
+            /* Overlay para cuando la lista está abierta */
+            .map-overlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 2000;
+            }
+            .map-overlay.active { display: block; }
         }
 
         /* MODAL */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background: white; margin: 2% auto; padding: 30px; width: 90%; max-width: 750px; border-radius: 25px; position: relative; max-height: 90vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 15px; right: 25px; font-size: 40px; cursor: pointer; color: #333; }
         .visit-card { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-top: 8px; border-left: 4px solid var(--secondary); font-size: 12px; }
@@ -126,22 +162,22 @@
                 <p>Inteligencia de Datos y Seguimiento Comercial</p>
             </div>
             <div class="action-grid">
-                <a href="#" class="action-btn" onclick="showView('stats-view')">
+                <a href="javascript:void(0)" class="action-btn" onclick="showView('stats-view')">
                     <div style="font-size: 50px;">📊</div>
                     <h3>Estadísticas</h3>
                     <div class="btn-label">DASHBOARD</div>
                 </a>
-                <a href="#" class="action-btn" onclick="showView('lista')">
+                <a href="javascript:void(0)" class="action-btn" onclick="showView('lista')">
                     <div style="font-size: 50px;">📋</div>
                     <h3>Prospectos</h3>
                     <div class="btn-label">LISTADO GENERAL</div>
                 </a>
-                <a href="#" class="action-btn" onclick="showView('mapa-view')">
+                <a href="javascript:void(0)" class="action-btn" onclick="showView('mapa-view')">
                     <div style="font-size: 50px;">📍</div>
                     <h3>Mapa Logístico</h3>
                     <div class="btn-label" style="background:var(--secondary); color:var(--primary);">UBICACIONES</div>
                 </a>
-                <a href="#" class="action-btn" onclick="showView('ventas-view')" style="border-color: var(--secondary);">
+                <a href="javascript:void(0)" class="action-btn" onclick="showView('ventas-view')" style="border-color: var(--secondary);">
                     <div style="font-size: 50px;">🛞</div>
                     <h3 style="color:var(--primary)">Ventas Mensuales</h3>
                     <div class="btn-label" style="background:var(--secondary); color:var(--primary);">ESTADÍSTICA VTA</div>
@@ -189,7 +225,7 @@
                     <div style="font-size: 40px; font-weight: 900; color: var(--primary);" id="total-count">0</div>
                     <div id="v-list-detail" style="text-align:left; font-size:12px; margin-top:10px; border-top:1px solid #eee; padding-top:10px;"></div>
                 </div>
-                <div class="chart-card"><h4>Efectividad (Prospecto vs Cliente)</h4><div class="chart-container"><canvas id="c-conv"></canvas></div></div>
+                <div class="chart-card"><h4>Efectividad</h4><div class="chart-container"><canvas id="c-conv"></canvas></div></div>
                 <div class="chart-card"><h4>Vendedores</h4><div class="chart-container"><canvas id="c-vend"></canvas></div></div>
                 <div class="chart-card"><h4>Zonas</h4><div class="chart-container"><canvas id="c-zon"></canvas></div></div>
                 <div class="chart-card"><h4>Giro</h4><div class="chart-container"><canvas id="c-gir"></canvas></div></div>
@@ -220,13 +256,20 @@
 
         <div id="mapa-view" class="view-section">
             <button class="btn-back" onclick="showView('home')">← VOLVER AL MENÚ</button>
-            <button class="map-mobile-toggle" onclick="toggleMapSidebar()">📋 VER LISTA DE UBICACIONES</button>
+            
+            <div class="map-overlay" id="mapOverlay" onclick="toggleMapSidebar(false)"></div>
+            <button class="map-mobile-toggle" id="mapToggleBtn" onclick="toggleMapSidebar(true)">📋 VER LISTA DE CLIENTES</button>
+
             <div class="map-layout">
                 <div id="map"></div>
                 <div class="map-sidebar" id="mapSidebar">
+                    <div style="padding: 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;">
+                        <span style="font-weight: 900; color: var(--primary); font-size: 14px;">LISTADO EN MAPA</span>
+                        <button onclick="toggleMapSidebar(false)" style="background: #eee; border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">CERRAR</button>
+                    </div>
+                    
                     <div style="padding:15px; border-bottom:1px solid #eee;" id="filters-map"></div>
-                    <div id="mapList" style="overflow-y:auto; flex:1; padding:10px;"></div>
-                    <button class="map-mobile-toggle" style="border-radius:0; background:#666;" onclick="toggleMapSidebar()">CERRAR LISTA</button>
+                    <div id="mapList" style="overflow-y:auto; flex:1; padding:10px; -webkit-overflow-scrolling: touch;"></div>
                 </div>
             </div>
         </div>
@@ -248,17 +291,32 @@
         function showView(id) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'mapa-view' && map) {
-                setTimeout(() => {
-                    map.invalidateSize();
-                }, 400);
+            
+            // Si salimos del mapa, asegurarnos de que el botón flotante se oculte
+            if(id !== 'mapa-view') {
+                document.getElementById('mapToggleBtn').style.display = 'none';
+            } else {
+                if(window.innerWidth <= 768) document.getElementById('mapToggleBtn').style.display = 'block';
+                if(map) {
+                    setTimeout(() => { map.invalidateSize(); }, 400);
+                }
             }
         }
 
-        function toggleMapSidebar() {
+        function toggleMapSidebar(show) {
             const sidebar = document.getElementById('mapSidebar');
-            sidebar.classList.toggle('open');
-            if(map) map.invalidateSize();
+            const overlay = document.getElementById('mapOverlay');
+            const btn = document.getElementById('mapToggleBtn');
+
+            if(show) {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                btn.style.display = 'none';
+            } else {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                btn.style.display = 'block';
+            }
         }
 
         function closeModal() { document.getElementById('clientModal').style.display = "none"; }
@@ -275,6 +333,7 @@
             return u; 
         }
 
+        // Inicializar Mapa
         map = L.map('map').setView([20.0842, -98.3672], 12);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
@@ -313,7 +372,7 @@
             const filterTpl = (idPrefix) => `
                 <select id="${idPrefix}-m" onchange="runFilter('${idPrefix}')"><option value="">📅 Mes</option>${Array.from(sets.m).sort((a,b)=>mesNombres.indexOf(a)-mesNombres.indexOf(b)).map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
                 <select id="${idPrefix}-v" onchange="runFilter('${idPrefix}')"><option value="">👤 Vendedor</option>${Array.from(sets.v).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
-                <select id="${idPrefix}-d" onchange="runFilter('${idPrefix}')"><option value="">📅 Fecha Exacta</option>${Array.from(sets.d).sort().reverse().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="${idPrefix}-d" onchange="runFilter('${idPrefix}')"><option value="">📅 Fecha</option>${Array.from(sets.d).sort().reverse().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
                 <select id="${idPrefix}-e" onchange="runFilter('${idPrefix}')"><option value="">🏷️ Estado</option><option value="cliente">⭐ Clientes</option><option value="prospecto">📌 Prospectos</option></select>
                 <select id="${idPrefix}-g" onchange="runFilter('${idPrefix}')"><option value="">🛠️ Giro</option>${Array.from(sets.g).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
                 <select id="${idPrefix}-z" onchange="runFilter('${idPrefix}')"><option value="">📍 Zona</option>${Array.from(sets.z).sort().map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
@@ -376,12 +435,12 @@
                     m.on('click', () => openModal(r)); markersArray.push(m);
                 }
                 const d = document.createElement('div');
-                d.style = `padding:10px; border-bottom:1px solid #eee; cursor:pointer; font-size:12px; ${isE?'background:#fff9db':''}`;
-                d.innerHTML = `<b>${r[4]}</b><br><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span> | <small>${r[3]}</small>`;
+                d.style = `padding:12px; border-bottom:1px solid #eee; cursor:pointer; font-size:13px; ${isE?'background:#fff9db':''}`;
+                d.innerHTML = `<div style="display:flex; justify-content:space-between;"><b>${r[4]}</b> <span style="font-size:10px; color:#666;">${r[3]}</span></div><span style="color:${colorMap[r[1]]}; font-weight:bold;">● ${r[1]}</span>`;
                 d.onclick = () => { 
-                    if(c) map.setView(c, 17); 
+                    if(c) map.setView(c, 16); 
                     openModal(r); 
-                    if(window.innerWidth < 768) toggleMapSidebar();
+                    if(window.innerWidth <= 768) toggleMapSidebar(false);
                 };
                 l.appendChild(d);
             });
@@ -439,18 +498,17 @@
                 <h2 style="color:var(--primary); margin:0;">${r[4]}</h2>
                 <div style="margin:10px 0;">${isE?'<span class="badge-status bg-established">CLIENTE ESTABLECIDO</span>':'<span class="badge-status" style="background:#888">PROSPECTO</span>'}</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px; background:#f9f9f9; padding:15px; border-radius:15px; border:1px solid #eee;">
-                    <div><b>Impulsor:</b> <span style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</span></div>
+                    <div><b>Vendedor:</b> <span style="color:${colorMap[r[1]]}; font-weight:800;">${r[1]}</span></div>
                     <div><b>Zona:</b> ${r[3]}</div>
                     <div><b>Giro:</b> ${r[5]}</div>
                     <div><b>WhatsApp:</b> ${r[8]}</div>
-                    <div><b>Interés:</b> ${r[12]}</div>
                 </div>
-                <div style="margin-top:15px; padding:12px; background:#fff7ed; border-radius:10px; font-size:12px; border:1px solid #ffedd5;"><b>Notas / Observaciones:</b><br>${r[13]||'Sin comentarios'}</div>
-                <h4 style="margin-top:20px; border-bottom:2px solid var(--secondary); padding-bottom:5px; color:var(--primary)">Bitácora de Seguimiento</h4>
-                ${vis || '<p style="font-size:12px; color:#999;">Sin visitas registradas.</p>'}
-                <div style="margin-top:25px; display:flex; gap:12px;">
-                    <a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); flex:1; text-align:center; padding:15px;">ENVIAR WHATSAPP</a>
-                    ${c ? `<a href="https://www.google.com/maps?q=${c[0]},${c[1]}" target="_blank" class="btn-label" style="background:var(--secondary); color:var(--primary); flex:1; text-align:center; padding:15px;">ABRIR GPS</a>` : ''}
+                <div style="margin-top:15px; padding:12px; background:#fff7ed; border-radius:10px; font-size:12px;"><b>Notas:</b><br>${r[13]||'Sin comentarios'}</div>
+                <h4 style="margin-top:20px; border-bottom:2px solid var(--secondary); color:var(--primary)">Seguimiento</h4>
+                ${vis || '<p style="font-size:12px; color:#999;">Sin visitas.</p>'}
+                <div style="margin-top:25px; display:flex; gap:10px;">
+                    <a href="https://wa.me/52${r[8].replace(/\D/g,'')}" target="_blank" class="btn-label" style="background:var(--accent); flex:1; text-align:center; padding:15px;">WHATSAPP</a>
+                    ${c ? `<a href="https://www.google.com/maps?q=${c[0]},${c[1]}" target="_blank" class="btn-label" style="background:var(--secondary); color:var(--primary); flex:1; text-align:center; padding:15px;">MAPA GPS</a>` : ''}
                 </div>
             `;
             document.getElementById('clientModal').style.display = "block";
