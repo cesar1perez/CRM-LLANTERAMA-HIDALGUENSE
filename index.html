@@ -190,6 +190,7 @@
             <div class="tires-summary">
                 <div class="tire-box"><label>Llantas Abril</label><span id="vSum-abr">0</span></div>
                 <div class="tire-box"><label>Llantas Mayo</label><span id="vSum-may">0</span></div>
+                <div class="tire-box" style="background:#e8f5e9;"><label style="color:#1b5e20;">Llantas Junio</label><span id="vSum-jun" style="color:#1b5e20;">0</span></div>
                 <div class="tire-box" style="background: var(--primary);"><label style="color:white">Total Llantas</label><span id="vSum-total" style="color:white">0</span></div>
                 <div class="tire-box" style="border: 2px solid var(--secondary);">
                     <label style="color:var(--primary)">% Conv. Clientes</label>
@@ -210,6 +211,8 @@
                             <th>Obs. Abril</th>
                             <th onclick="sortTable(6, 'salesTable')" style="background:#e1f5fe; text-align:center;">MAYO ↕</th>
                             <th>Obs. Mayo</th>
+                            <th onclick="sortTable(8, 'salesTable')" style="background:#e8f5e9; text-align:center;">JUNIO ↕</th>
+                            <th>Obs. Junio</th>
                         </tr>
                     </thead>
                     <tbody id="vtaTableBody"></tbody>
@@ -292,7 +295,6 @@
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            // Si salimos del mapa, asegurarnos de que el botón flotante se oculte
             if(id !== 'mapa-view') {
                 document.getElementById('mapToggleBtn').style.display = 'none';
             } else {
@@ -408,12 +410,12 @@
             const b = document.getElementById('vtaTableBody'); b.innerHTML = '';
             data.forEach(r => {
                 const isE = r[21] && r[21].toLowerCase().includes("establecido");
-                const a = parseFloat(r[23])||0, m = parseFloat(r[25])||0;
+                const a = parseFloat(r[23])||0, m = parseFloat(r[25])||0, j = parseFloat(r[27])||0;
                 const tr = document.createElement('tr');
                 tr.style.cursor = 'pointer'; 
                 if(isE) tr.className = 'row-established';
                 tr.onclick = () => openModal(r);
-                tr.innerHTML = `<td style="font-family:monospace; font-weight:bold;">${r[22]||'---'}</td><td><b>${r[4]}</b></td><td style="color:${colorMap[r[1]]}; font-weight:bold;">${r[1]}</td><td>${isE?'<span class="badge-status bg-established">CLIENTE</span>':'<span style="color:#999;font-size:10px">PROSP.</span>'}</td><td style="text-align:center; background:#fff3e0;" class="${a>0?'vta-positiva':''}">${a}</td><td style="font-size:11px; color:#555;">${r[24]||''}</td><td style="text-align:center; background:#e1f5fe;" class="${m>0?'vta-positiva':''}">${m}</td><td style="font-size:11px; color:#555;">${r[26]||''}</td>`;
+                tr.innerHTML = `<td style="font-family:monospace; font-weight:bold;">${r[22]||'---'}</td><td><b>${r[4]}</b></td><td style="color:${colorMap[r[1]]}; font-weight:bold;">${r[1]}</td><td>${isE?'<span class="badge-status bg-established">CLIENTE</span>':'<span style="color:#999;font-size:10px">PROSP.</span>'}</td><td style="text-align:center; background:#fff3e0;" class="${a>0?'vta-positiva':''}">${a}</td><td style="font-size:11px; color:#555;">${r[24]||''}</td><td style="text-align:center; background:#e1f5fe;" class="${m>0?'vta-positiva':''}">${m}</td><td style="font-size:11px; color:#555;">${r[26]||''}</td><td style="text-align:center; background:#e8f5e9;" class="${j>0?'vta-positiva':''}">${j}</td><td style="font-size:11px; color:#555;">${r[28]||''}</td>`;
                 b.appendChild(tr);
             });
             updateVentaStats();
@@ -472,16 +474,18 @@
         }
 
         function updateVentaStats() {
-            let sA = 0, sM = 0, totalRegistrosVisibles = 0, clientesEstablecidosVisibles = 0;
+            let sA = 0, sM = 0, sJ = 0, totalRegistrosVisibles = 0, clientesEstablecidosVisibles = 0;
             document.querySelectorAll('#vtaTableBody tr').forEach(tr => {
                 sA += parseFloat(tr.cells[4].innerText)||0;
                 sM += parseFloat(tr.cells[6].innerText)||0;
+                sJ += parseFloat(tr.cells[8].innerText)||0;
                 totalRegistrosVisibles++;
                 if(tr.classList.contains('row-established')) clientesEstablecidosVisibles++;
             });
             document.getElementById('vSum-abr').innerText = sA;
             document.getElementById('vSum-may').innerText = sM;
-            document.getElementById('vSum-total').innerText = sA + sM;
+            document.getElementById('vSum-jun').innerText = sJ;
+            document.getElementById('vSum-total').innerText = sA + sM + sJ;
             document.getElementById('vConv-rate-vals').innerText = `${clientesEstablecidosVisibles} / ${totalRegistrosVisibles}`;
             document.getElementById('vConv-rate').innerText = totalRegistrosVisibles > 0 
                 ? ((clientesEstablecidosVisibles / totalRegistrosVisibles) * 100).toFixed(1) + "%" : "0%";
